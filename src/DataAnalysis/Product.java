@@ -1,11 +1,12 @@
-package CoreGUI;
+package DataAnalysis;
 
 public abstract class Product {
 
     protected String title;
     protected String link;
     protected String image;
-    protected float price;
+    protected double price;
+    protected long volume;
     protected String desc;
     protected String brand;
     protected String supermarket;
@@ -13,14 +14,14 @@ public abstract class Product {
 
 
     public Product() {
-        //Empty constructor
+        title = "Empty";
     }
 
-    public void setPrice(float price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return this.price;
     }
 
@@ -45,7 +46,7 @@ public abstract class Product {
     }
 
     public String getBrand() {
-        return this.brand;
+        return brand;
     }
 
     public void setSupermarket(String supermarket) {
@@ -53,16 +54,37 @@ public abstract class Product {
     }
 
     public String getSupermarket() {
-        return this.supermarket;
+        return supermarket;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setSupermarketImg(String superMarketImg) {
+        this.superMarketImg = superMarketImg;
     }
 
-    public String getImage() {
-        return this.image;
+    public String getSupermarketImg() {
+        return superMarketImg;
     }
 
-    public abstract float getPricePerUnit();
+    public void setLink(String link) {this.link = link;}
+
+    public String getLink() {return link;}
+
+    public void setImage(String image) {this.image = image;}
+
+    public String getImage() {return image;}
+
+    public abstract double getPricePerUnit();
+
+    public long getVolume() {
+        return volume;
+    }
+
+    public void setVolume(long volume) {
+        this.volume = volume;
+    }
+
+    public boolean isNull()
+    {
+        return title.equals("Empty");
+    }
 }

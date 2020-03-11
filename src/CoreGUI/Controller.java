@@ -25,6 +25,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.event.ActionEvent;
 
+import DataAnalysis.*;
+
 public class Controller {
     // Properties
 

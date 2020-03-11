@@ -1,5 +1,7 @@
 package CoreGUI;
 
+import DataAnalysis.*;
+
 public class TestProduct extends Product {
 
     public TestProduct() {
@@ -15,7 +17,7 @@ public class TestProduct extends Product {
     }
 
     @Override
-    public float getPricePerUnit() {
+    public double getPricePerUnit() {
         return 0;
     }
 }
