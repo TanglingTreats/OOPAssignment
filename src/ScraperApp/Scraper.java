@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 
 public class Scraper {
 

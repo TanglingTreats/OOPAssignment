@@ -1,5 +1,7 @@
 package CoreGUI;
 
+import DataAnalysis.Comparison;
+import DataAnalysis.Product;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,10 +23,21 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        String baseUrl = "https://www.fairprice.com.sg/search?query=sanitizer";
+//        String baseUrl = "https://www.fairprice.com.sg/search?query=sanitizer";
+//
+//        Scraper scraper = new Scraper();
+//
+//        scraper.getProduct(baseUrl);
 
-        Scraper scraper = new Scraper();
+//        testing
+        JsonFileHandler test = new JsonFileHandler();
+        Comparison comparison = new Comparison();
+        Product first = comparison.compare(test.readFile(), "Sanitiser")[0];
+        Product second = comparison.compare(test.readFile(), "Sanitiser")[1];
+        Product third = comparison.compare(test.readFile(), "Sanitiser")[2];
 
-        scraper.getProduct(baseUrl);
+        System.out.println(first.getTitle());
+        System.out.println(second.getTitle());
+        System.out.println(third.getTitle());
     }
 }
