@@ -1,3 +1,5 @@
+package CoreGUI;
+
 public abstract class Product {
 
     protected String title;
@@ -43,7 +45,7 @@ public abstract class Product {
     }
 
     public String getBrand() {
-        return brand;
+        return this.brand;
     }
 
     public void setSupermarket(String supermarket) {
@@ -51,7 +53,15 @@ public abstract class Product {
     }
 
     public String getSupermarket() {
-        return supermarket;
+        return this.supermarket;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+        return this.image;
     }
 
     public abstract float getPricePerUnit();
