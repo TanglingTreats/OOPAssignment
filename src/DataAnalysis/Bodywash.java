@@ -1,6 +1,6 @@
 package DataAnalysis;
 
-public class Sanitiser extends Product
+public class Bodywash extends Product
 {
 	//  Price per litre
 	private double PricePerUnit;
@@ -15,3 +15,4 @@ public class Sanitiser extends Product
 		return PricePerUnit;
 	}
 }
+
