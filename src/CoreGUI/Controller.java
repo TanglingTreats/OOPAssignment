@@ -198,7 +198,10 @@ public class Controller {
             panel.getStyleClass().add("productPane");
 
             prodPane[i] = panel;
+            prodPane[i].setVgap(10.0);
         }
+
+
     }
 
     // Adds images and texts according to the top 3 products
