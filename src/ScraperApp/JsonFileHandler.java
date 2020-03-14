@@ -1,8 +1,6 @@
 package ScraperApp;
 
-import DataAnalysis.Product;
-import DataAnalysis.Sanitiser;
-import DataAnalysis.Bodywash;
+import DataAnalysis.*;
 
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -11,6 +9,7 @@ import java.io.FileReader;
 
 public class JsonFileHandler
 {
+
 	public JsonFileHandler()
 	{
 		// Empty constructor
@@ -26,10 +25,9 @@ public class JsonFileHandler
 
 	}
 
-	public Product[] readFile()
+	public Product[] readFile(String productName, Product[] chosenProducts)
 	{
 		JSONParser parser = new JSONParser();
-        Product[] array = null;
 		try
 		{
 			JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(System.getProperty("user.dir") + "/src/Data/data.json"));
@@ -37,37 +35,48 @@ public class JsonFileHandler
 
 			JSONArray jsonArray = (JSONArray) jsonObject.get("data");
 
-			array = new Product[jsonArray.size()];
+
 			int position = 0;
+			int productCount = 0;
+			int productWeight = -1;
 
-			for (JSONObject test : (Iterable<JSONObject>) jsonArray)
+			for (JSONObject product : (Iterable<JSONObject>) jsonArray)
 			{
-				String category = (String) test.get("category");
-				boolean valid = false;
-				Product object = null;
-				if (category.equals("bodywash"))
+				if (productName.equals(product.get("category")))
 				{
-					object = new Bodywash();
-					valid = true;
+					productCount++;
+					productWeight = productWeight == -1 ? Double.parseDouble(product.get("vol").toString()) <= 10 ? 1 : 0 : productWeight;
 				}
+			}
 
-				if (category.equals("sanitiser"))
-				{
-					object = new Sanitiser();
-					valid = true;
-				}
-				if (valid)
-				{
-					object.setTitle((String) test.get("name"));
-					object.setPrice((Double) test.get("price"));
-					object.setVolume((Long) test.get("vol"));
-					object.setBrand((String) test.get("brand"));
-					object.setSupermarket((String) test.get("supermarket"));
-					object.setSupermarketImg((String) test.get("supermarketImg"));
-					object.setLink((String) test.get("url"));
-					object.setLink((String) test.get("img"));
+			chosenProducts = new Product[productCount];
 
-					array[position] = object;
+
+			for (JSONObject product : (Iterable<JSONObject>) jsonArray)
+			{
+				if (productName.equals(product.get("category")))
+				{
+					Product object = null;
+					switch (productWeight)
+					{
+						case 0:
+							object = new belowOneKilogram();
+							break;
+						case 1:
+							object = new aboveOneKilogram();
+							break;
+					}
+
+					object.setTitle((String) product.get("name"));
+					object.setPrice(Double.parseDouble(product.get("price").toString()));
+					object.setVolume(Double.parseDouble(product.get("vol").toString()));
+					object.setBrand((String) product.get("brand"));
+					object.setSupermarket((String) product.get("supermarket"));
+					object.setSupermarketImg((String) product.get("supermarketImg"));
+					object.setLink((String) product.get("url"));
+					object.setImage((String) product.get("img"));
+
+					chosenProducts[position] = object;
 					position++;
 				}
 			}
@@ -75,6 +84,6 @@ public class JsonFileHandler
 		{
 			e.printStackTrace();
 		}
-		return array;
+		return chosenProducts;
 	}
 }

@@ -1,13 +1,13 @@
 package DataAnalysis;
 
-public class Bodywash extends Product
+public class belowOneKilogram extends Product
 {
 	//  Price per litre
 	private double PricePerUnit;
 
 	public void setPricePerUnit()
 	{
-		PricePerUnit = price / volume * 1000;
+		PricePerUnit = getPrice() / getVolume() * 1000;
 	}
 
 	public double getPricePerUnit()

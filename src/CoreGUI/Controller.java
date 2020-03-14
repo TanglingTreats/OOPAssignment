@@ -68,6 +68,7 @@ public class Controller {
     private JsonFileHandler fileHandler;
     private Database database;
     private Results results;
+    private Product[] products;
 
     private ArrayList<Product> productArrayList = new ArrayList<Product>();
 
@@ -93,6 +94,7 @@ public class Controller {
         fileHandler = new JsonFileHandler();
         database = new Database();
         results = new Results();
+        products = null;
 
         createProdBox();
 
@@ -141,11 +143,14 @@ public class Controller {
                     }
                     System.out.println("Input in lowercase: " + input);
 
-                    database.compare(fileHandler.readFile(), input, results);
+                    products = fileHandler.readFile(input, products);
+                    database.update(products, results);
+
+                    //database.compare(fileHandler.readFile(input, products), input, results);
 
                     Product[] top3Products = results.getTop3();
 
-                    Product[] filtered = database.filter(results.getTop3()[2].getBrand());
+                    Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
 
                     for (Product x :top3Products) {
                         System.out.println("Product name: " + x.getTitle());
@@ -208,14 +213,14 @@ public class Controller {
                 switch (j)
                 {
                     case 0:
-//                        if(testProducts.get(counter).getImage() != null || !testProducts.get(counter).getImage().isEmpty() || !testProducts.get(counter).getImage().isBlank()) {
-//                            Image image = new Image(testProducts.get(counter).getImage(), 0, productHeight / numberOfRows-1, true, true, true);
-//                            ImageView iv1 = new ImageView();
-//                            iv1.setImage(image);
-//
-//                            System.out.println("Image URL: " + testProducts.get(counter).getImage());
-//                            prodPane[i].add(iv1, 0, j);
-//                        }
+                        if(testProducts.get(counter).getImage() != null || !testProducts.get(counter).getImage().isEmpty() || !testProducts.get(counter).getImage().isBlank()) {
+                            Image image = new Image(testProducts.get(counter).getImage(), 0, productHeight / numberOfRows-1, true, true, true);
+                            ImageView iv1 = new ImageView();
+                            iv1.setImage(image);
+
+                            System.out.println("Image URL: " + testProducts.get(counter).getImage());
+                            prodPane[i].add(iv1, 0, j);
+                        }
 
                         break;
                     case 1:

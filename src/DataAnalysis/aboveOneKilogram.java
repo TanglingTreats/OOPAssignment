@@ -1,13 +1,13 @@
 package DataAnalysis;
 
-public class Sanitiser extends Product
+public class aboveOneKilogram extends Product
 {
 	//  Price per litre
 	private double PricePerUnit;
 
 	public void setPricePerUnit()
 	{
-		PricePerUnit = price / volume * 1000;
+		PricePerUnit = getPrice() / getVolume();
 	}
 
 	public double getPricePerUnit()
