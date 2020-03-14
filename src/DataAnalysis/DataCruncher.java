@@ -1,16 +1,21 @@
 package DataAnalysis;
 
+import java.awt.*;
 import java.lang.Math;
+import java.util.Dictionary;
 
 public class DataCruncher
 {
-	public void crunch(double cumulativePrice, int count, Product[] chosenProducts, Results results)
+	public void crunch(double cumulativePrice, int count, Product[] chosenProducts, Results results, Dictionary<String, Color> brandColors)
 	{
 		double mean = cumulativePrice / count;
 		double variance = 0;
 
 		for (Product product : chosenProducts)
 		{
+			product.setColor(brandColors.get(product.getBrand()));
+			product.setMeanDelta(product.getPricePerUnit() - mean);
+
 			variance += Math.pow((product.getPricePerUnit() - mean), 2);
 			if (product.getBrand().equals(results.getEconomicalBrand()))
 			{
@@ -46,7 +51,5 @@ public class DataCruncher
 		double SD = Math.sqrt(variance / count);
 		results.setStatistics(new double[]{mean, SD});
 	}
-
-//	tag delta between mean and product's price to each product
 //	calculate price per SD difference
 }

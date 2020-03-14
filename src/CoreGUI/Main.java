@@ -52,58 +52,21 @@ public class Main extends Application
 		Results results = new Results();
 		Product[] products = null;
 
-		products = new JsonFileHandler().readFile("biscuit", products);
+		products = new JsonFileHandler().readFile("bodywash", products);
 		database.update(products, results);
 
-		Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
-
-//		for (Product x : results.getTop3())
+//		for (Product x : products)
 //		{
-//			System.out.println(x.getTitle());
-//			System.out.println(x.getPricePerUnit());
+//			System.out.println(x.getColor());
 //		}
 
-		String[] brands = new String[20];
-		int count = 0;
+		Product[] filtered = database.filter(products, results.getTop3()[0].getBrand());
 
-		for (Product x : products)
+		for (Product x : filtered)
 		{
-			String brand = x.getBrand();
-			boolean exist = false;
-			for (int i = 0; i < count; i++)
-			{
-				if (brands[i].equals(brand))
-				{
-					exist = true;
-				}
-			}
-
-			if (!exist)
-			{
-				brands[count] = brand;
-				count++;
-			}
+			System.out.println(x.getColor());
 		}
 
-		count = 0;
-
-		for (String x : brands)
-		{
-			if (x != null)
-			{
-				System.out.println(x);
-				count++;
-			}
-		}
-		System.out.println(count);
 	}
-//		System.out.println(results.getExpensive().getBrand());
-//
-//		System.out.println(results.getLowestEconomical() + "," + results.getHighestEconomical() + "," + results.getEconomicalBrand());
-//		System.out.println(results.getLowestExpensive() + "," + results.getHighestExpensive() + "," + results.getExpensiveBrand());
-//
-//		System.out.println(filtered.length);
-//		for (Product x : filtered)
-//			System.out.println(x.getBrand());
 }
 

@@ -1,5 +1,7 @@
 package DataAnalysis;
 
+import java.awt.*;
+
 public abstract class Product
 {
 	private String title;
@@ -12,12 +14,12 @@ public abstract class Product
 	private String supermarket;
 	private String superMarketImg;
 
+	private Color color;
 	private double meanDelta;
 
 
 	public Product()
 	{
-		title = "Empty";
 	}
 
 	public void setPrice(Double price)
@@ -112,9 +114,23 @@ public abstract class Product
 		this.volume = volume;
 	}
 
-	public boolean isNull()
+	public void setColor(Color color){
+		this.color = color;
+	}
+
+	public Color getColor()
 	{
-		return title.equals("Empty");
+		return color;
+	}
+
+	public void setMeanDelta(double meanDelta)
+	{
+		this.meanDelta = meanDelta;
+	}
+
+	public double getMeanDelta()
+	{
+		return meanDelta;
 	}
 
 	private static String toTitle(String text) {
