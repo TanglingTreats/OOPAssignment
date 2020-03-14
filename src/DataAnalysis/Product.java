@@ -2,16 +2,17 @@ package DataAnalysis;
 
 public abstract class Product
 {
+	private String title;
+	private String link;
+	private String image;
+	private double price;
+	private double volume;
+	private String desc;
+	private String brand;
+	private String supermarket;
+	private String superMarketImg;
 
-	protected String title;
-	protected String link;
-	protected String image;
-	protected double price;
-	protected long volume;
-	protected String desc;
-	protected String brand;
-	protected String supermarket;
-	protected String superMarketImg;
+	private double meanDelta;
 
 
 	public Product()
@@ -31,7 +32,7 @@ public abstract class Product
 
 	public void setTitle(String title)
 	{
-		this.title = title;
+		this.title = toTitle(title);
 	}
 
 	public String getTitle()
@@ -46,12 +47,12 @@ public abstract class Product
 
 	public String getDesc()
 	{
-		return this.desc;
+		return this.desc.toLowerCase();
 	}
 
 	public void setBrand(String brand)
 	{
-		this.brand = brand;
+		this.brand = toTitle(brand);
 	}
 
 	public String getBrand()
@@ -61,7 +62,7 @@ public abstract class Product
 
 	public void setSupermarket(String supermarket)
 	{
-		this.supermarket = supermarket;
+		this.supermarket = toTitle(supermarket);
 	}
 
 	public String getSupermarket()
@@ -101,12 +102,12 @@ public abstract class Product
 
 	public abstract double getPricePerUnit();
 
-	public long getVolume()
+	public double getVolume()
 	{
 		return volume;
 	}
 
-	public void setVolume(long volume)
+	public void setVolume(double volume)
 	{
 		this.volume = volume;
 	}
@@ -114,5 +115,28 @@ public abstract class Product
 	public boolean isNull()
 	{
 		return title.equals("Empty");
+	}
+
+	private static String toTitle(String text) {
+		if (text == null || text.isEmpty()) {
+			return text;
+		}
+
+		StringBuilder converted = new StringBuilder();
+
+		boolean convertNext = true;
+		for (char ch : text.toCharArray()) {
+			if (Character.isSpaceChar(ch)) {
+				convertNext = true;
+			} else if (convertNext) {
+				ch = Character.toTitleCase(ch);
+				convertNext = false;
+			} else {
+				ch = Character.toLowerCase(ch);
+			}
+			converted.append(ch);
+		}
+
+		return converted.toString();
 	}
 }

@@ -2,15 +2,6 @@ package DataAnalysis;
 
 public class Database
 {
-	//    Returns top 3 most worth it
-	//    Mean, SD
-	//    Least worth it
-
-	private double cumulativePrice = 0;
-	private int count = 0;
-
-	private Product[] chosenProducts = null;
-
 	DataCruncher bigBoy = new DataCruncher();
 
 	public Database()
@@ -18,78 +9,56 @@ public class Database
 //        empty constructor
 	}
 
-//	Consider splitting this into multiple methods, ie Filter by Products,
-	public Results compare(Product[] products, String option, Results results)
+	public void update(Product[] products, Results results)
 	{
+		int count = 0;
+		double cumulativePrice = 0;
+
+		int productWeight = products[0].getVolume() <= 10 ? 1 : 0;
 
 		for (Product product : products)
 		{
-			boolean checkThis = false;
-			if (option.equals("bodywash") && product instanceof Bodywash)
+			switch (productWeight)
 			{
-				Bodywash bodywash = (Bodywash) product;
-				bodywash.setPricePerUnit();
-				cumulativePrice += bodywash.getPricePerUnit();
-				count++;
-				checkThis = true;
+				case 0:
+					belowOneKilogram belowOneKilogram = (belowOneKilogram) product;
+					belowOneKilogram.setPricePerUnit();
+					cumulativePrice += belowOneKilogram.getPricePerUnit();
+					count++;
+					break;
+				case 1:
+					aboveOneKilogram aboveOneKilogram = (aboveOneKilogram) product;
+					aboveOneKilogram.setPricePerUnit();
+					cumulativePrice += aboveOneKilogram.getPricePerUnit();
+					count++;
+					break;
 			}
-			if (option.equals("sanitiser") && product instanceof Sanitiser)
-			{
-				Sanitiser sanitiser = (Sanitiser) product;
-				sanitiser.setPricePerUnit();
-				cumulativePrice += sanitiser.getPricePerUnit();
-				count++;
-				checkThis = true;
-			}
-			if (checkThis)
-			{
-				if (results.isNull())
-				{
-					results.initialise(product);
-				} else if (results.compareLower(product))
-				{
-					results.newTop(product);
-				}
 
-				if (results.compareHigher(product))
-					results.newExpensive(product);
+			if (results.isNull())
+			{
+				results.initialise(product);
+			} else if (results.compareLower(product))
+			{
+				results.newTop(product);
 			}
+
+			if (results.compareHigher(product))
+				results.newExpensive(product);
 		}
 
-		if (option.equals("bodywash"))
-			chosenProducts = new Bodywash[count];
-		else if (option.equals("sanitiser"))
-			chosenProducts = new Sanitiser[count];
-
-		int index = 0;
-		for (Product product : products)
-		{
-			if (option.equals("bodywash") && product instanceof Bodywash)
-			{
-				chosenProducts[index] = (Bodywash) product;
-				index++;
-			}
-			if (option.equals("sanitiser") && product instanceof Sanitiser)
-			{
-				chosenProducts[index] = (Sanitiser) product;
-				index++;
-			}
-		}
-
-		bigBoy.crunch(cumulativePrice, count, chosenProducts, results);
-		return results;
+		bigBoy.crunch(cumulativePrice, count, products, results);
 	}
 
-	public Product[] filter(String brand)
+	public static Product[] filter(Product[] products,String brand)
 	{
 		Product[] filteredResults = null;
 		int count = 0;
-		for (Product product : chosenProducts)
+		for (Product product : products)
 			if (product.getBrand().equals(brand))
 				count++;
 		filteredResults = new Product[count];
 		count = 0;
-		for (Product product : chosenProducts)
+		for (Product product : products)
 			if (product.getBrand().equals(brand))
 			{
 				filteredResults[count] = product;

@@ -23,7 +23,7 @@ public class Results
 
 	public boolean compareLower(Product x)
 	{
-		return x.getPricePerUnit() < first.getPricePerUnit();
+		return x.getPricePerUnit() <= first.getPricePerUnit();
 	}
 
 	public boolean compareHigher(Product x)

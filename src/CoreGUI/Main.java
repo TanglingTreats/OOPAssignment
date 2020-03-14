@@ -48,21 +48,62 @@ public class Main extends Application
 //        launch(args);
 
 //        testing
-		JsonFileHandler test = new JsonFileHandler();
 		Database database = new Database();
 		Results results = new Results();
-		database.compare(test.readFile(), "bodywash", results);
-		Product[] filtered = database.filter(results.getTop3()[2].getBrand());
+		Product[] products = null;
 
-		for (Product x :results.getTop3())
-            System.out.println(x.getBrand());
-		System.out.println(results.getExpensive().getBrand());
+		products = new JsonFileHandler().readFile("biscuit", products);
+		database.update(products, results);
 
-		System.out.println(results.getLowestEconomical() + "," + results.getHighestEconomical() + "," + results.getEconomicalBrand());
-		System.out.println(results.getLowestExpensive() + "," + results.getHighestExpensive() + "," + results.getExpensiveBrand());
+		Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
 
-		System.out.println(filtered.length);
-		for (Product x : filtered)
-			System.out.println(x.getBrand());
+//		for (Product x : results.getTop3())
+//		{
+//			System.out.println(x.getTitle());
+//			System.out.println(x.getPricePerUnit());
+//		}
+
+		String[] brands = new String[20];
+		int count = 0;
+
+		for (Product x : products)
+		{
+			String brand = x.getBrand();
+			boolean exist = false;
+			for (int i = 0; i < count; i++)
+			{
+				if (brands[i].equals(brand))
+				{
+					exist = true;
+				}
+			}
+
+			if (!exist)
+			{
+				brands[count] = brand;
+				count++;
+			}
+		}
+
+		count = 0;
+
+		for (String x : brands)
+		{
+			if (x != null)
+			{
+				System.out.println(x);
+				count++;
+			}
+		}
+		System.out.println(count);
 	}
+//		System.out.println(results.getExpensive().getBrand());
+//
+//		System.out.println(results.getLowestEconomical() + "," + results.getHighestEconomical() + "," + results.getEconomicalBrand());
+//		System.out.println(results.getLowestExpensive() + "," + results.getHighestExpensive() + "," + results.getExpensiveBrand());
+//
+//		System.out.println(filtered.length);
+//		for (Product x : filtered)
+//			System.out.println(x.getBrand());
 }
+

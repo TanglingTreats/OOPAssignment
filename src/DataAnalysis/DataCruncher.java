@@ -4,14 +4,10 @@ import java.lang.Math;
 
 public class DataCruncher
 {
-	private double mean = 0;
-	private double variance = 0;
-	private double SD = 0;
-
-
 	public void crunch(double cumulativePrice, int count, Product[] chosenProducts, Results results)
 	{
-		mean = cumulativePrice / count;
+		double mean = cumulativePrice / count;
+		double variance = 0;
 
 		for (Product product : chosenProducts)
 		{
@@ -47,10 +43,10 @@ public class DataCruncher
 			}
 		}
 
-		SD = Math.sqrt(variance / count);
+		double SD = Math.sqrt(variance / count);
 		results.setStatistics(new double[]{mean, SD});
 	}
-//	Brand that caters to the biggest group
+
 //	tag delta between mean and product's price to each product
 //	calculate price per SD difference
 }
