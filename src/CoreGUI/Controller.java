@@ -164,7 +164,7 @@ public class Controller {
 
                     Product[] top3Products = results.getTop3();
 
-                    Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
+//                    Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
 
                     if(!productArrayList.isEmpty())
                     {

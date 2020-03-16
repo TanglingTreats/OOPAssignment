@@ -53,7 +53,7 @@ public class Main extends Application
 //        launch(args);
 
 //        testing
-		Scraper.scrape("bodywash");
+//		Scraper.scrape("bodywash");
 		Database database = new Database();
 		Results results = new Results();
 		Product[] products = null;
