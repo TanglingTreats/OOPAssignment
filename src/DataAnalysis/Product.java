@@ -18,8 +18,7 @@ public abstract class Product
 	private double meanDelta;
 
 
-	public Product()
-	{
+	public Product() {
 	}
 
 	public void setPrice(Double price)
