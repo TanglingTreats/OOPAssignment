@@ -3,18 +3,20 @@ package CoreGUI;
 import java.awt.*;
 
 import java.awt.color.ProfileDataException;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import ScraperApp.Scraper;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -119,9 +121,6 @@ public class Controller {
 
     public void initialiseEventListeners()
     {
-//        searchText.textProperty().addListener(((observableValue, oldValue, newValue) -> {
-//            System.out.println("Textfield change from " + oldValue + " to " + newValue);
-//        }));
 
         searchText.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.ENTER) {
@@ -146,17 +145,21 @@ public class Controller {
                     }
                     System.out.println("Input in lowercase: " + input);
 
+                    try {
+                        Scraper.scrape(input);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     products = fileHandler.readFile(input, products);
+
+                    System.out.println("Is there products " + products.length);
                     database.update(products, results);
                     numberOfProducts = products.length;
 
+                    // Calculate number of rows needed to display products
                     contentNumOfRows = (int)Math.ceil(numberOfProducts/contentNumOfCol);
-                    System.out.println("number of rows: "+contentNumOfRows);
 
                     this.prodPane = new GridPane[numberOfProducts];
-
-                    System.out.println("Number of grid panels " + this.prodPane.length);
-                    System.out.println("Number of products: " + numberOfProducts);
 
                     setProductPane(prodPane);
 
@@ -175,8 +178,6 @@ public class Controller {
                     for (Product x :products) {
                         productArrayList.add(x);
                     }
-//                    System.out.println("Product in array list: " + productArrayList.get(0).getTitle());
-//                    System.out.println("Product in array list: " + productArrayList.get(0).getImage());
 
                     System.out.println(results.getExpensive().getBrand());
                     // Accept input here and pass it in to a function
@@ -189,6 +190,7 @@ public class Controller {
         });
     }
 
+    // Initialise grid panel for products to be stored in.
     public void setProductPane(GridPane[] prodPane) {
         for(int i = 0; i < numberOfProducts; i++) {
             GridPane panel = new GridPane();
@@ -266,6 +268,37 @@ public class Controller {
                 k++;
             }
         }
+    }
+
+    //Plot points on the scatter chart
+    public void plotPriceToVolume() {
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getVolume() - product1.getVolume());
+            }
+        });
+
+        NumberAxis xAxis = new NumberAxis(0, products[0].getVolume(), 1);
+        xAxis.setLabel("Volume");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getPrice() - product1.getPrice());
+            }
+        });
+        NumberAxis yAxis = new NumberAxis(0, products[0].getPrice(), 1);
+        yAxis.setLabel("Price");
+
+        priceToVolumeChart = new ScatterChart<Number, Number>(xAxis, yAxis);
+        priceToVolumeChart.setTitle("Price To Volume");
+
+        XYChart.Series series1 = new XYChart.Series();
+
+        series1.setName("Fairprice");
+        
+
+
     }
 
 }
