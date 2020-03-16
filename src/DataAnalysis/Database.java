@@ -1,6 +1,8 @@
 package DataAnalysis;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -9,26 +11,27 @@ public class Database
     private int uniqueBrands = 0;
     private String[] brands;
 
-    private Dictionary<String, Color> brandColors = new Hashtable<String, Color>();
+    private Hashtable<String, Color> brandColors = new Hashtable<String, Color>();
 
     public Database()
     {
 //        empty constructor
     }
 
-    public void update(Product[] products, Results results)
+    public void clear()
     {
-        Arrays.sort(products, new Comparator<Product>() {
-            public int compare(Product product1, Product product2) {
-                return (int) (product1.getVolume() - product2.getVolume());
-            }
-        });
+        uniqueBrands = 0;
+        brandColors.clear();
+    }
 
+    public Product[] update(Product[] products, Results results)
+    {
         int count = products.length;
         double cumulativePrice = 0;
         brands = new String[products.length];
 
-        int productWeight = products[0].getVolume() <= 10 ? 1 : 0;
+        int productWeight = products[5].getVolume() <= 25 ? 1 : 0;
+
 
         for (Product product : products)
         {
@@ -67,8 +70,7 @@ public class Database
         }
 
         generateColors();
-        new DataCruncher().crunch(cumulativePrice, count, products, results, brandColors);
-
+         return new DataCruncher().crunch(cumulativePrice, count, products, results, brandColors);
     }
 
     public static Product[] filterBrand(Product[] products, String brand)
