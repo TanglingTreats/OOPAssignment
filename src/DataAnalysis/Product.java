@@ -4,7 +4,7 @@ import java.awt.*;
 
 public abstract class Product
 {
-	private String title;
+	public String title;
 	private String link;
 	private String image;
 	private double price;
@@ -131,6 +131,8 @@ public abstract class Product
 	{
 		return meanDelta;
 	}
+
+
 
 	private static String toTitle(String text) {
 		if (text == null || text.isEmpty()) {
