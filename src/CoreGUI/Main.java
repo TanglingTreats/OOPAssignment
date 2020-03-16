@@ -16,23 +16,22 @@ public class Main extends Application
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	{
-
 		FXMLLoader loader = new FXMLLoader();
+		Parent root = loader.load(getClass().getResource("newPage.fxml"));
+		Scene scene = new Scene(root);
+
 		Controller controller = new Controller();
-
 		loader.setController(controller);
-		Parent root = loader.load(getClass().getResource("mainPage.fxml"));
 
-		Scene scene = new Scene(root, 1080, 720);
+		scene.getStylesheets().add(getClass().getResource("page.css").toExternalForm());
 
-		scene.getStylesheets().add("page.css");
-
-
-		primaryStage.setTitle("Price Comparison");
+		primaryStage.setTitle("Get The Giant Fair-Price!");
 		primaryStage.setScene(scene);
-
-
 		primaryStage.show();
+
+
+
+
 
 	}
 

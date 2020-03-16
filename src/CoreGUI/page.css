@@ -1,0 +1,10 @@
+GridPane, AnchorPane, Pane {
+    -fx-background-color: #e0ecff;
+}
+
+.productPane {
+    -fx-background-color: #b5cef7;
+    -fx-pref-height: 360;
+    -fx-pref-height: 360;
+    -fx-background-insets: 0, 1;
+}
