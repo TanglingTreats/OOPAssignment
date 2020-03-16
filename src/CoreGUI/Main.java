@@ -11,6 +11,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Main extends Application
 {
@@ -63,11 +67,18 @@ public class Main extends Application
 //			System.out.println(x.getColor());
 //		}
 
-		Product[] filtered = database.filter(products, results.getTop3()[0].getBrand());
+		Arrays.sort(products, new Comparator<Product>() {
+			public int compare(Product product1, Product product2) {
+				return (int) (product1.getPricePerUnit() - product2.getPricePerUnit());
+			}
+		});
 
-		for (Product x : filtered)
+//		database.sort(products, 0, products.length - 1,"PricePerUnit");
+//		Product[] filtered = database.filter(products, results.getTop3()[0].getBrand());
+
+		for (Product x : products)
 		{
-			System.out.println(x.getColor());
+			System.out.println(x.getPricePerUnit());
 		}
 
 	}
