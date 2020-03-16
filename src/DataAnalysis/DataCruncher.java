@@ -64,13 +64,26 @@ public class DataCruncher
 		int medianIndex, Q1Index, Q3Index;
 //		Sort first
 
-		Arrays.sort(products, new Comparator<Product>()
+		if (option.equals("Volume"))
 		{
-			public int compare(Product product1, Product product2)
+			Arrays.sort(products, new Comparator<Product>()
 			{
-				return (int) (product1.getVolume() - product2.getVolume());
-			}
-		});
+				public int compare(Product product1, Product product2)
+				{
+					return (int) (product1.getVolume() - product2.getVolume());
+				}
+			});
+		} else if (option.equals("Price"))
+		{
+			Arrays.sort(products, new Comparator<Product>()
+			{
+				public int compare(Product product1, Product product2)
+				{
+					return (int) (product1.getPrice() - product2.getPrice());
+				}
+			});
+		}
+
 
 //		if even length
 		if (products.length % 2 == 0)
@@ -135,7 +148,7 @@ public class DataCruncher
 		if (option.equals("Volume"))
 			products = Arrays.stream(products).filter(elem -> elem.getVolume() > (fQ1 - IQR) && elem.getVolume() < (fQ3 + IQR)).toArray(Product[]::new);
 		else if (option.equals("Price"))
-			products = Arrays.stream(products).filter(elem -> elem.getPrice() < (fQ1 - IQR) || elem.getPrice() > (fQ3 + IQR)).toArray(Product[]::new);
+			products = Arrays.stream(products).filter(elem -> elem.getPrice() > (fQ1 - IQR) && elem.getPrice() < (fQ3 + IQR)).toArray(Product[]::new);
 
 		return products;
 	}

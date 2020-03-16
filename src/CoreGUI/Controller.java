@@ -164,16 +164,17 @@ public class Controller {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    products = fileHandler.readFile(input, products);
-
+                    products = fileHandler.readFile(input);
 
                     System.out.println("Is there products " + products.length);
                     if(!results.isNull())
                     {
+                        System.out.println("Resetting");
                         results = new Results();
                         database = new Database();
                         contentGrid.getChildren().clear();
                     }
+
                     products = database.update(products, results);
                     System.out.println("Updated: " + products.length);
                     numberOfProducts = products.length;
