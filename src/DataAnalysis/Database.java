@@ -36,7 +36,8 @@ public class Database
         double cumulativePrice = 0;
         brands = new String[products.length];
 
-        int productWeight = products[0].getVolume() <= 10 ? 1 : 0;
+        int productWeight = products[5].getVolume() <= 25 ? 1 : 0;
+
 
         for (Product product : products)
         {

@@ -50,7 +50,7 @@ public class Main extends Application
 //        Scraper scraper = new Scraper();
 //
 //        scraper.getProduct(baseUrl);
-//        launch(args);
+       launch(args);
 
 //        testing
 //		Scraper.scrape("bodywash");

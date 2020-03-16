@@ -146,7 +146,7 @@ public class Scraper
 	// check if conversion is needed
 	static public Float regexVol(String rawVol, Float vol)
 	{
-		Pattern pattern = Pattern.compile("(\\d*\\.?\\d+)\\s*((?:(?:g\\s*)?KG|kg|L|(?:g(?:\\.|\\b))?))");
+		Pattern pattern = Pattern.compile("(\\d*\\.?\\d+)\\s*((?:(?:g\\s*)?L|(?:g(?:\\.|\\b))?))");
 		Matcher matcher = pattern.matcher(rawVol);
 
 		if (matcher.matches())

@@ -3,18 +3,20 @@ package CoreGUI;
 import java.awt.*;
 
 import java.awt.color.ProfileDataException;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import ScraperApp.Scraper;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,9 +61,23 @@ public class Controller {
     @FXML
     private ScatterChart priceToVolumeChart;
     @FXML
+    private NumberAxis xAxisPTV;
+    @FXML
+    private NumberAxis yAxisPTV;
+
+    @FXML
     private ScatterChart priceToMeanDeltaChart;
     @FXML
+    private NumberAxis xAxisPTMD;
+    @FXML
+    private NumberAxis yAxisPTMD;
+
+    @FXML
     private ScatterChart pricePerUnitChart;
+    @FXML
+    private NumberAxis xAxisPPU;
+    @FXML
+    private NumberAxis yAxisPPU;
 
     @FXML
     private Pane root;
@@ -119,9 +135,6 @@ public class Controller {
 
     public void initialiseEventListeners()
     {
-//        searchText.textProperty().addListener(((observableValue, oldValue, newValue) -> {
-//            System.out.println("Textfield change from " + oldValue + " to " + newValue);
-//        }));
 
         searchText.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.ENTER) {
@@ -146,37 +159,41 @@ public class Controller {
                     }
                     System.out.println("Input in lowercase: " + input);
 
+                    try {
+                        Scraper.scrape(input);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     products = fileHandler.readFile(input, products);
+
+
+                    System.out.println("Is there products " + products.length);
+                    if(!results.isNull())
+                    {
+                        results = new Results();
+                        database = new Database();
+                        contentGrid.getChildren().clear();
+                    }
                     database.update(products, results);
                     numberOfProducts = products.length;
 
+                    // Calculate number of rows needed to display products
                     contentNumOfRows = (int)Math.ceil(numberOfProducts/contentNumOfCol);
-                    System.out.println("number of rows: "+contentNumOfRows);
 
                     this.prodPane = new GridPane[numberOfProducts];
 
-                    System.out.println("Number of grid panels " + this.prodPane.length);
-                    System.out.println("Number of products: " + numberOfProducts);
-
                     setProductPane(prodPane);
 
-                    //database.compare(fileHandler.readFile(input, products), input, results);
-
                     Product[] top3Products = results.getTop3();
-
-//                    Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
 
                     if(!productArrayList.isEmpty())
                     {
                         productArrayList.clear();
-                        this.contentGrid = new GridPane();
                     }
 
                     for (Product x :products) {
                         productArrayList.add(x);
                     }
-//                    System.out.println("Product in array list: " + productArrayList.get(0).getTitle());
-//                    System.out.println("Product in array list: " + productArrayList.get(0).getImage());
 
                     System.out.println(results.getExpensive().getBrand());
                     // Accept input here and pass it in to a function
@@ -184,11 +201,16 @@ public class Controller {
                     insertItemsIntoPane(prodPane, productArrayList);
                     setGridPane(prodPane);
                     initialiseContentGrid(contentNumOfRows);
+
+                    plotPriceToVolume();
+                    plotPriceToMeanDelta();
+                    plotPricePerUnit();
                 }
             }
         });
     }
 
+    // Initialise grid panel for products to be stored in.
     public void setProductPane(GridPane[] prodPane) {
         for(int i = 0; i < numberOfProducts; i++) {
             GridPane panel = new GridPane();
@@ -266,6 +288,175 @@ public class Controller {
                 k++;
             }
         }
+    }
+
+    //Plot points on the scatter chart
+    public void plotPriceToVolume() {
+        if(!priceToVolumeChart.getData().isEmpty())
+        {
+            priceToVolumeChart.getData().clear();
+        }
+
+        Product[] fairpriceProd = database.filterSupermarket(products, "Fairprice");
+        Product[] giantProd = database.filterSupermarket(products, "Giant");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getVolume() - product1.getVolume());
+            }
+        });
+        System.out.println("Most volume item: " + products[0].getVolume());
+
+        xAxisPTV.setUpperBound(Math.ceil(products[0].getVolume()));
+        if(products[1] instanceof aboveOneKilogram)
+        {
+            xAxisPTV.setLowerBound(1);
+            xAxisPTV.setTickUnit(1);
+        }
+        else if(products[1] instanceof belowOneKilogram){
+            System.out.println("volume: " + products[1].getTitle());
+            xAxisPTV.setLowerBound(0);
+            xAxisPTV.setTickUnit(10);
+        }
+        xAxisPTV.setLabel("Volume");
+        xAxisPTV.setAutoRanging(false);
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getPrice() - product1.getPrice());
+            }
+        });
+
+        yAxisPTV.setLowerBound(0);
+        yAxisPTV.setUpperBound(Math.ceil(products[0].getPrice()));
+        yAxisPTV.setTickUnit(5);
+        yAxisPTV.setLabel("Price");
+        yAxisPTV.setAutoRanging(false);
+
+        priceToVolumeChart.setTitle("Price To Volume");
+
+        XYChart.Series series1 = new XYChart.Series();
+
+        series1.setName("Fairprice");
+
+        for(Product prod : fairpriceProd){
+            series1.getData().add(new XYChart.Data(prod.getVolume(), prod.getPrice()));
+        }
+
+        XYChart.Series series2 = new XYChart.Series();
+
+        series2.setName("Giant");
+
+        for(Product prod : giantProd){
+            series2.getData().add(new XYChart.Data(prod.getVolume(), prod.getPrice()));
+        }
+
+        priceToVolumeChart.getData().addAll(series1, series2);
+
+    }
+
+    public void plotPriceToMeanDelta() {
+        if(!priceToMeanDeltaChart.getData().isEmpty()){
+            priceToMeanDeltaChart.getData().clear();
+        }
+
+        priceToMeanDeltaChart.setTitle("Price to Mean Delta");
+
+        Product[] fairpriceProd = database.filterSupermarket(products, "Fairprice");
+        Product[] giantProd = database.filterSupermarket(products, "Giant");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getMeanDelta() - product1.getMeanDelta());
+            }
+        });
+
+        yAxisPTMD.setUpperBound(Math.ceil(products[0].getMeanDelta()));
+        yAxisPTMD.setLowerBound(0);
+        yAxisPTMD.setTickUnit(0.2);
+        yAxisPTMD.setAutoRanging(false);
+        yAxisPTMD.setLabel("Mean Delta");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getPrice() - product1.getPrice());
+            }
+        });
+
+        xAxisPTMD.setUpperBound(Math.ceil(products[0].getPrice()));
+        xAxisPTMD.setLowerBound(0);
+        xAxisPTMD.setTickUnit(10);
+        xAxisPTMD.setAutoRanging(false);
+        xAxisPTMD.setLabel("Price");
+
+        XYChart.Series series1 = new XYChart.Series();
+
+        series1.setName("Fairprice");
+
+        for(Product prod : fairpriceProd){
+            series1.getData().add(new XYChart.Data(prod.getPrice(), prod.getMeanDelta()));
+        }
+
+        XYChart.Series series2 = new XYChart.Series();
+
+        series2.setName("Giant");
+
+        for(Product prod : giantProd){
+            series2.getData().add(new XYChart.Data(prod.getPrice(), prod.getMeanDelta()));
+        }
+
+        priceToMeanDeltaChart.getData().addAll(series1, series2);
+
+    }
+
+    private void plotPricePerUnit(){
+        if(!pricePerUnitChart.getData().isEmpty()) {
+            pricePerUnitChart.getData().clear();
+        }
+
+        pricePerUnitChart.setTitle("PrICe pER uNIt ChaRt");
+
+        Product[] fairpriceProd = database.filterSupermarket(products, "Fairprice");
+        Product[] giantProd = database.filterSupermarket(products, "Giant");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getPricePerUnit() - product1.getPricePerUnit());
+            }
+        });
+
+
+        xAxisPPU.setUpperBound(products[0].getPricePerUnit());
+        xAxisPPU.setLowerBound(0);
+        xAxisPPU.setTickUnit(1);
+        xAxisPPU.setAutoRanging(false);
+
+        xAxisPPU.setLabel("Price Per Unit");
+
+        yAxisPPU.setUpperBound(2);
+        yAxisPPU.setLowerBound(0);
+        yAxisPPU.setTickUnit(1);
+        yAxisPPU.setAutoRanging(false);
+
+        yAxisPPU.setLabel("Unit");
+
+        XYChart.Series series1 = new XYChart.Series();
+
+        series1.setName("Fairprice");
+
+        for(Product prod : fairpriceProd){
+            series1.getData().add(new XYChart.Data(prod.getPricePerUnit(), 1));
+        }
+
+        XYChart.Series series2 = new XYChart.Series();
+
+        series2.setName("Giant");
+
+        for(Product prod : giantProd){
+            series2.getData().add(new XYChart.Data(prod.getPricePerUnit(), 1));
+        }
+
+        pricePerUnitChart.getData().addAll(series1, series2);
     }
 
 }
