@@ -26,9 +26,9 @@ public class Database
 
 	public Product[] update(Product[] products, Results results)
 	{
-	    DataCruncher bigboy = new DataCruncher();
+		DataCruncher bigboy = new DataCruncher();
 		products = bigboy.removeOutliers(products, "Volume");
-        products = bigboy.removeOutliers(products, "Price");
+		products = bigboy.removeOutliers(products, "Price");
 
 		int count = products.length;
 		double cumulativePrice = 0;
@@ -140,5 +140,15 @@ public class Database
 		for (int i = 0; i < uniqueBrands; i++)
 			brandColors.put(brands[i], Color.getHSBColor(i * interval / 360, 1, 1));
 
+	}
+
+	public int getUniqueBrands()
+	{
+		return uniqueBrands;
+	}
+
+	public String[] getBrands()
+	{
+		return brands;
 	}
 }
