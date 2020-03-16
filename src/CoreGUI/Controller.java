@@ -61,9 +61,23 @@ public class Controller {
     @FXML
     private ScatterChart priceToVolumeChart;
     @FXML
+    private NumberAxis xAxisPTV;
+    @FXML
+    private NumberAxis yAxisPTV;
+
+    @FXML
     private ScatterChart priceToMeanDeltaChart;
     @FXML
+    private NumberAxis xAxisPTMD;
+    @FXML
+    private NumberAxis yAxisPTMD;
+
+    @FXML
     private ScatterChart pricePerUnitChart;
+    @FXML
+    private NumberAxis xAxisPPU;
+    @FXML
+    private NumberAxis yAxisPPU;
 
     @FXML
     private Pane root;
@@ -152,7 +166,14 @@ public class Controller {
                     }
                     products = fileHandler.readFile(input, products);
 
+
                     System.out.println("Is there products " + products.length);
+                    if(!results.isNull())
+                    {
+                        results = new Results();
+                        database = new Database();
+                        contentGrid.getChildren().clear();
+                    }
                     database.update(products, results);
                     numberOfProducts = products.length;
 
@@ -163,16 +184,11 @@ public class Controller {
 
                     setProductPane(prodPane);
 
-                    //database.compare(fileHandler.readFile(input, products), input, results);
-
                     Product[] top3Products = results.getTop3();
-
-                    Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
 
                     if(!productArrayList.isEmpty())
                     {
                         productArrayList.clear();
-                        this.contentGrid = new GridPane();
                     }
 
                     for (Product x :products) {
@@ -185,6 +201,10 @@ public class Controller {
                     insertItemsIntoPane(prodPane, productArrayList);
                     setGridPane(prodPane);
                     initialiseContentGrid(contentNumOfRows);
+
+                    plotPriceToVolume();
+                    plotPriceToMeanDelta();
+                    plotPricePerUnit();
                 }
             }
         });
@@ -272,33 +292,171 @@ public class Controller {
 
     //Plot points on the scatter chart
     public void plotPriceToVolume() {
+        if(!priceToVolumeChart.getData().isEmpty())
+        {
+            priceToVolumeChart.getData().clear();
+        }
+
+        Product[] fairpriceProd = database.filterSupermarket(products, "Fairprice");
+        Product[] giantProd = database.filterSupermarket(products, "Giant");
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
                 return (int) (product2.getVolume() - product1.getVolume());
             }
         });
+        System.out.println("Most volume item: " + products[0].getVolume());
 
-        NumberAxis xAxis = new NumberAxis(0, products[0].getVolume(), 1);
-        xAxis.setLabel("Volume");
+        xAxisPTV.setUpperBound(Math.ceil(products[0].getVolume()));
+        if(products[1] instanceof aboveOneKilogram)
+        {
+            xAxisPTV.setLowerBound(1);
+            xAxisPTV.setTickUnit(1);
+        }
+        else if(products[1] instanceof belowOneKilogram){
+            System.out.println("volume: " + products[1].getTitle());
+            xAxisPTV.setLowerBound(0);
+            xAxisPTV.setTickUnit(10);
+        }
+        xAxisPTV.setLabel("Volume");
+        xAxisPTV.setAutoRanging(false);
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
                 return (int) (product2.getPrice() - product1.getPrice());
             }
         });
-        NumberAxis yAxis = new NumberAxis(0, products[0].getPrice(), 1);
-        yAxis.setLabel("Price");
 
-        priceToVolumeChart = new ScatterChart<Number, Number>(xAxis, yAxis);
+        yAxisPTV.setLowerBound(0);
+        yAxisPTV.setUpperBound(Math.ceil(products[0].getPrice()));
+        yAxisPTV.setTickUnit(5);
+        yAxisPTV.setLabel("Price");
+        yAxisPTV.setAutoRanging(false);
+
         priceToVolumeChart.setTitle("Price To Volume");
 
         XYChart.Series series1 = new XYChart.Series();
 
         series1.setName("Fairprice");
-        
+
+        for(Product prod : fairpriceProd){
+            series1.getData().add(new XYChart.Data(prod.getVolume(), prod.getPrice()));
+        }
+
+        XYChart.Series series2 = new XYChart.Series();
+
+        series2.setName("Giant");
+
+        for(Product prod : giantProd){
+            series2.getData().add(new XYChart.Data(prod.getVolume(), prod.getPrice()));
+        }
+
+        priceToVolumeChart.getData().addAll(series1, series2);
+
+    }
+
+    public void plotPriceToMeanDelta() {
+        if(!priceToMeanDeltaChart.getData().isEmpty()){
+            priceToMeanDeltaChart.getData().clear();
+        }
+
+        priceToMeanDeltaChart.setTitle("Price to Mean Delta");
+
+        Product[] fairpriceProd = database.filterSupermarket(products, "Fairprice");
+        Product[] giantProd = database.filterSupermarket(products, "Giant");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getMeanDelta() - product1.getMeanDelta());
+            }
+        });
+
+        yAxisPTMD.setUpperBound(Math.ceil(products[0].getMeanDelta()));
+        yAxisPTMD.setLowerBound(0);
+        yAxisPTMD.setTickUnit(0.2);
+        yAxisPTMD.setAutoRanging(false);
+        yAxisPTMD.setLabel("Mean Delta");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getPrice() - product1.getPrice());
+            }
+        });
+
+        xAxisPTMD.setUpperBound(Math.ceil(products[0].getPrice()));
+        xAxisPTMD.setLowerBound(0);
+        xAxisPTMD.setTickUnit(10);
+        xAxisPTMD.setAutoRanging(false);
+        xAxisPTMD.setLabel("Price");
+
+        XYChart.Series series1 = new XYChart.Series();
+
+        series1.setName("Fairprice");
+
+        for(Product prod : fairpriceProd){
+            series1.getData().add(new XYChart.Data(prod.getPrice(), prod.getMeanDelta()));
+        }
+
+        XYChart.Series series2 = new XYChart.Series();
+
+        series2.setName("Giant");
+
+        for(Product prod : giantProd){
+            series2.getData().add(new XYChart.Data(prod.getPrice(), prod.getMeanDelta()));
+        }
+
+        priceToMeanDeltaChart.getData().addAll(series1, series2);
+
+    }
+
+    private void plotPricePerUnit(){
+        if(!pricePerUnitChart.getData().isEmpty()) {
+            pricePerUnitChart.getData().clear();
+        }
+
+        pricePerUnitChart.setTitle("PrICe pER uNIt ChaRt");
+
+        Product[] fairpriceProd = database.filterSupermarket(products, "Fairprice");
+        Product[] giantProd = database.filterSupermarket(products, "Giant");
+
+        Arrays.sort(products, new Comparator<Product>() {
+            public int compare(Product product1, Product product2) {
+                return (int) (product2.getPricePerUnit() - product1.getPricePerUnit());
+            }
+        });
 
 
+        xAxisPPU.setUpperBound(products[0].getPricePerUnit());
+        xAxisPPU.setLowerBound(0);
+        xAxisPPU.setTickUnit(1);
+        xAxisPPU.setAutoRanging(false);
+
+        xAxisPPU.setLabel("Price Per Unit");
+
+        yAxisPPU.setUpperBound(2);
+        yAxisPPU.setLowerBound(0);
+        yAxisPPU.setTickUnit(1);
+        yAxisPPU.setAutoRanging(false);
+
+        yAxisPPU.setLabel("Unit");
+
+        XYChart.Series series1 = new XYChart.Series();
+
+        series1.setName("Fairprice");
+
+        for(Product prod : fairpriceProd){
+            series1.getData().add(new XYChart.Data(prod.getPricePerUnit(), 1));
+        }
+
+        XYChart.Series series2 = new XYChart.Series();
+
+        series2.setName("Giant");
+
+        for(Product prod : giantProd){
+            series2.getData().add(new XYChart.Data(prod.getPricePerUnit(), 1));
+        }
+
+        pricePerUnitChart.getData().addAll(series1, series2);
     }
 
 }

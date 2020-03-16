@@ -58,7 +58,7 @@ public abstract class Product
 
 	public String getBrand()
 	{
-		return brand;
+		return this.brand;
 	}
 
 	public void setSupermarket(String supermarket)
@@ -68,7 +68,7 @@ public abstract class Product
 
 	public String getSupermarket()
 	{
-		return supermarket;
+		return this.supermarket;
 	}
 
 	public void setSupermarketImg(String superMarketImg)

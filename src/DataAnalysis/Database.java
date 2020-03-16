@@ -1,6 +1,8 @@
 package DataAnalysis;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -9,11 +11,17 @@ public class Database
     private int uniqueBrands = 0;
     private String[] brands;
 
-    private Dictionary<String, Color> brandColors = new Hashtable<String, Color>();
+    private Hashtable<String, Color> brandColors = new Hashtable<String, Color>();
 
     public Database()
     {
 //        empty constructor
+    }
+
+    public void clear()
+    {
+        uniqueBrands = 0;
+        brandColors.clear();
     }
 
     public void update(Product[] products, Results results)
@@ -22,7 +30,8 @@ public class Database
         double cumulativePrice = 0;
         brands = new String[products.length];
 
-        int productWeight = products[0].getVolume() <= 10 ? 1 : 0;
+        int productWeight = products[5].getVolume() <= 25 ? 1 : 0;
+
 
         for (Product product : products)
         {

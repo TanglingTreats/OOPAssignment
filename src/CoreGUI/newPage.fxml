@@ -68,28 +68,28 @@
          <children>
             <ScatterChart fx:id="priceToVolumeChart">
               <xAxis>
-                  <CategoryAxis side="BOTTOM" />
+                  <NumberAxis fx:id="xAxisPTV" side="BOTTOM" />
               </xAxis>
               <yAxis>
-                  <NumberAxis side="LEFT" />
+                  <NumberAxis fx:id="yAxisPTV" side="LEFT" />
               </yAxis>
             </ScatterChart>
             <ScatterChart fx:id="priceToMeanDeltaChart" GridPane.rowIndex="1">
               <xAxis>
-                <CategoryAxis side="BOTTOM" />
+                <NumberAxis fx:id="xAxisPTMD" side="BOTTOM" />
               </xAxis>
               <yAxis>
-                <NumberAxis side="LEFT" />
+                <NumberAxis fx:id="yAxisPTMD" side="LEFT" />
               </yAxis>
             </ScatterChart>
          </children>
       </GridPane>
       <ScatterChart fx:id="pricePerUnitChart" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <xAxis>
-          <CategoryAxis side="BOTTOM" />
+          <NumberAxis fx:id="xAxisPPU" side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis side="LEFT" />
+          <NumberAxis fx:id="yAxisPPU" side="LEFT" />
         </yAxis>
       </ScatterChart>
       <GridPane GridPane.rowIndex="1">
