@@ -10,17 +10,17 @@ import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
@@ -36,9 +36,11 @@ import DataAnalysis.*;
 public class Controller {
     // Properties
 
-    final int numberOfRows = 3;
-    int numberOfProducts = 3;
-    float productHeight = 560f;
+    private final int numberOfRows = 3;
+    private final float contentNumOfCol = 3.0f;
+    private int contentNumOfRows = 3;
+    private int numberOfProducts = 0;
+    private float productHeight = 600f;
 
     @FXML
     private TextField searchText;
@@ -55,13 +57,24 @@ public class Controller {
     private Text invalidTxt;
 
     @FXML
+    private ScatterChart priceToVolumeChart;
+    @FXML
+    private ScatterChart priceToMeanDeltaChart;
+    @FXML
+    private ScatterChart pricePerUnitChart;
+
+    @FXML
     private Pane root;
 
-    private GridPane[] prodPane = new GridPane[3];
+    @FXML
+    private AnchorPane anchorPane;
+
+    private GridPane[] prodPane = new GridPane[numberOfProducts];
 
     private Text keyword1 = new Text("Sanitiser");
-    private Text keyword2 = new Text("Soap");
-    private Text keyword3 = new Text("Toilet Roll");
+    private Text keyword2 = new Text("Bodywash");
+    private Text keyword3 = new Text("Wheat Biscuits");
+    private Text keyword4 = new Text("Detergent");
 
     private TextFlow popularKeywords = new TextFlow(keyword1, keyword2, keyword3);
 
@@ -72,44 +85,36 @@ public class Controller {
 
     private ArrayList<Product> productArrayList = new ArrayList<Product>();
 
-    private TestProduct test = new TestProduct("Thomasin McKenzie",
-            "I wonder what it is",
-            "https://i.pinimg.com/originals/51/c5/5f/51c55f4a4b1166e51abd7934b2d5ce24.png");
-
     public void initialize() {
         System.out.println("Initialize ran!");
-
-//        productArrayList.add(new TestProduct("Thomasin McKenzie",
-//                "I wonder what it is",
-//                "https://i.pinimg.com/originals/51/c5/5f/51c55f4a4b1166e51abd7934b2d5ce24.png"));
-//
-//        productArrayList.add(new TestProduct("Elizabeth Olsen",
-//                "Scarlet Witch The Sexy",
-//                "https://static.tvtropes.org/pmwiki/pub/images/elizabeth_olsen_56.jpg"));
-//
-//        productArrayList.add(new TestProduct("Scarlet Johannson",
-//                "Black Widow maaaaan",
-//                "https://cdn.britannica.com/59/182359-050-C6F38CA3/Scarlett-Johansson-Natasha-Romanoff-Avengers-Age-of.jpg"));
 
         fileHandler = new JsonFileHandler();
         database = new Database();
         results = new Results();
         products = null;
 
-        createProdBox();
-
-        contentGrid.setHgap(10);
-        contentGrid.setVgap(20);
-
-        setProductPane(prodPane);
-
         initialiseEventListeners();
-
-        System.out.println("Text field has this: "+ searchText.getText() );
     }
 
-    public void createProdBox() {
-        System.out.println("This method ran");
+    public void initialiseContentGrid(int rowsNeeded) {
+        int currentNumOfRows = contentGrid.getRowCount();
+
+        for(int i = currentNumOfRows; i < rowsNeeded; i++) {
+            this.contentGrid.addRow(i);
+        }
+        this.contentGrid.setHgap(10);
+        this.contentGrid.setVgap(20);
+
+        this.contentGrid.setPadding(new Insets(5, 10, 10, 10));
+
+        this.anchorPane.setPrefHeight((300 * rowsNeeded ) + (this.contentGrid.getVgap() * rowsNeeded) + 200);
+
+        //System.out.println("Get row count:" + contentGrid.getRowCount());
+
+        for(int i = 0; i < currentNumOfRows; i++) {
+            this.contentGrid.getRowConstraints().add(new RowConstraints(300));
+        }
+
     }
 
     public void initialiseEventListeners()
@@ -120,12 +125,10 @@ public class Controller {
 
         searchText.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.ENTER) {
-                //System.out.println("The input text is:" + searchText.getText());
-                System.out.println("The enter key was pressed!");
 
                 String input = searchText.getText().toLowerCase();
 
-                if(input.isBlank() || input.isEmpty() || input == " " || input == "") {
+                if(input.isBlank() || input.isEmpty() || input == " " || input == ""){
                     if(!invalidTxt.isVisible()) {
                         invalidTxt.setVisible(true);
                     }
@@ -145,6 +148,17 @@ public class Controller {
 
                     products = fileHandler.readFile(input, products);
                     database.update(products, results);
+                    numberOfProducts = products.length;
+
+                    contentNumOfRows = (int)Math.ceil(numberOfProducts/contentNumOfCol);
+                    System.out.println("number of rows: "+contentNumOfRows);
+
+                    this.prodPane = new GridPane[numberOfProducts];
+
+                    System.out.println("Number of grid panels " + this.prodPane.length);
+                    System.out.println("Number of products: " + numberOfProducts);
+
+                    setProductPane(prodPane);
 
                     //database.compare(fileHandler.readFile(input, products), input, results);
 
@@ -152,41 +166,37 @@ public class Controller {
 
                     Product[] filtered = database.filter(products, results.getTop3()[2].getBrand());
 
-                    for (Product x :top3Products) {
-                        System.out.println("Product name: " + x.getTitle());
-                        productArrayList.add(x);
-                        System.out.println("Image url: " + x.getPrice());
-                        System.out.println("Image url: " + x.getImage());
+                    if(!productArrayList.isEmpty())
+                    {
+                        productArrayList.clear();
+                        this.contentGrid = new GridPane();
                     }
-                    System.out.println("Product in array list: " + productArrayList.get(0).getTitle());
-                    System.out.println("Product in array list: " + productArrayList.get(0).getImage());
+
+                    for (Product x :products) {
+                        productArrayList.add(x);
+                    }
+//                    System.out.println("Product in array list: " + productArrayList.get(0).getTitle());
+//                    System.out.println("Product in array list: " + productArrayList.get(0).getImage());
 
                     System.out.println(results.getExpensive().getBrand());
                     // Accept input here and pass it in to a function
                     // convert query into lowercase letters
                     insertItemsIntoPane(prodPane, productArrayList);
                     setGridPane(prodPane);
-
+                    initialiseContentGrid(contentNumOfRows);
                 }
             }
         });
     }
 
     public void setProductPane(GridPane[] prodPane) {
-
         for(int i = 0; i < numberOfProducts; i++) {
             GridPane panel = new GridPane();
             panel.setAlignment(Pos.CENTER);
 
             for(int j = 0; j < numberOfRows; j++) {
-                if(j == 0)
-                {
-                    RowConstraints rowConst = new RowConstraints();
-                    rowConst.setMaxHeight(productHeight / numberOfRows-1);
-                }
-
                 RowConstraints rowConst = new RowConstraints();
-                rowConst.setMaxHeight(productHeight / numberOfRows+1);
+
                 rowConst.setValignment(VPos.CENTER);
                 panel.getRowConstraints().add(rowConst);
 
@@ -195,13 +205,12 @@ public class Controller {
             columnConst.setHalignment(HPos.CENTER);
             panel.getColumnConstraints().add(columnConst);
 
+            panel.setMaxHeight(productHeight);
             panel.getStyleClass().add("productPane");
-
+            panel.setVgap(5.0);
+            panel.setPrefHeight(360);
             prodPane[i] = panel;
-            prodPane[i].setVgap(10.0);
         }
-
-
     }
 
     // Adds images and texts according to the top 3 products
@@ -220,8 +229,6 @@ public class Controller {
                             Image image = new Image(testProducts.get(counter).getImage(), 0, productHeight / numberOfRows-1, true, true, true);
                             ImageView iv1 = new ImageView();
                             iv1.setImage(image);
-
-                            System.out.println("Image URL: " + testProducts.get(counter).getImage());
                             prodPane[i].add(iv1, 0, j);
                         }
 
@@ -249,8 +256,15 @@ public class Controller {
 
     // Adds product panels into Grid Pane
     public void setGridPane(GridPane[] prodPane) {
-        for(int i = 0; i < numberOfProducts; i++) {
-            contentGrid.add(prodPane[i], i, 0);
+        int k = 0;
+        for(int i = 0; i < contentNumOfRows; i++) {
+            for(int j = 0; j < contentNumOfCol; j++) {
+                if(k == numberOfProducts) {
+                    break;
+                }
+                contentGrid.add(prodPane[k], j, i);
+                k++;
+            }
         }
     }
 
