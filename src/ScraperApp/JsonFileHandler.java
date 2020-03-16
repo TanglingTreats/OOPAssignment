@@ -45,7 +45,7 @@ public class JsonFileHandler
 				if (productName.equals(product.get("category")))
 				{
 					productCount++;
-					productWeight = productWeight == -1 ? Double.parseDouble(product.get("vol").toString()) <= 10 ? 1 : 0 : productWeight;
+					productWeight = productWeight == -1 ? Double.parseDouble(product.get("vol").toString()) <= 25 ? 1 : 0 : productWeight;
 				}
 			}
 
