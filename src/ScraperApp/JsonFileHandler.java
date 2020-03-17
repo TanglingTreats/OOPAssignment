@@ -101,6 +101,7 @@ public class JsonFileHandler
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+			return products;
 		}
 
 		return products;

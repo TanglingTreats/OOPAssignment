@@ -8,6 +8,8 @@ import java.io.IOException;
 
 public class JsonWriter
 {
+	public static String rootFolder = System.getProperty("user.dir") + "/src/Data/data.json";
+
 	public static void writeJson() throws IOException
 	{
 		JSONObject objects;
@@ -30,7 +32,6 @@ public class JsonWriter
 
 		JSONObject data = new JSONObject().put("data", arrays);
 
-		String rootFolder = System.getProperty("user.dir") + "/src/Data/data.json";
 		FileWriter writer = new FileWriter(rootFolder);
 		writer.write(data.toString());
 		writer.close();

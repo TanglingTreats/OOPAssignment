@@ -2,13 +2,10 @@ package CoreGUI;
 
 import java.awt.*;
 
-import java.awt.color.ProfileDataException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 
 import ScraperApp.Scraper;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -18,7 +15,6 @@ import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.TextField;
@@ -27,7 +23,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
-import javafx.event.ActionEvent;
 
 import DataAnalysis.Database;
 import DataAnalysis.Product;
@@ -171,6 +166,10 @@ public class Controller {
                         e.printStackTrace();
                     }
                     products = fileHandler.readFile(input);
+                    if (products == null) {
+                        System.out.println("ERROR There is no products! Edwin Please handle this error.");
+                    }
+
 
                     System.out.println("Is there products " + products.length);
                     if(!results.isNull())
@@ -313,7 +312,15 @@ public class Controller {
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
-                return (int) (product2.getVolume() - product1.getVolume());
+                if (product2.getVolume() >= product1.getVolume())
+                {
+                    return 1;
+                }
+                else if (product2.getVolume() < product1.getVolume()){
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
 
@@ -331,7 +338,15 @@ public class Controller {
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
-                return (int) (product2.getPrice() - product1.getPrice());
+                if (product2.getPrice() >= product1.getPrice())
+                {
+                    return 1;
+                }
+                else if (product2.getPrice() < product1.getPrice()){
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
 
@@ -389,7 +404,15 @@ public class Controller {
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
-                return (int) (product2.getMeanDelta() - product1.getMeanDelta());
+                if (product2.getMeanDelta() >= product1.getMeanDelta())
+                {
+                    return 1;
+                }
+                else if (product2.getMeanDelta() < product1.getMeanDelta()){
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
 
@@ -401,7 +424,15 @@ public class Controller {
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
-                return (int) (product2.getPrice() - product1.getPrice());
+                if (product2.getPrice() >= product1.getPrice())
+                {
+                    return 1;
+                }
+                else if (product2.getPrice() < product1.getPrice()){
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
 
@@ -455,7 +486,15 @@ public class Controller {
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
-                return (int) (product2.getPricePerUnit() - product1.getPricePerUnit());
+                if (product2.getPricePerUnit() >= product1.getPricePerUnit())
+                {
+                    return 1;
+                }
+                else if (product2.getPricePerUnit() < product1.getPricePerUnit()){
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
 
