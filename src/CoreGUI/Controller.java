@@ -216,6 +216,7 @@ public class Controller {
                     plotPriceToVolume();
                     plotPriceToMeanDelta();
                     plotPricePerUnit();
+                    setBrandGrid();
                 }
             }
         });
@@ -481,6 +482,68 @@ public class Controller {
         chart.setStyle(
                 "-fx-font-size: " + fontSize +"em;"
         );
+    }
+
+    private void setBrandGrid() {
+        GridPane grid = new GridPane();
+
+        for(int i = 0; i < 2; i++) {
+            RowConstraints rowConstraints = new RowConstraints();
+            rowConstraints.setValignment(VPos.CENTER);
+            rowConstraints.setPercentHeight(30/2);
+
+            grid.getRowConstraints().add(rowConstraints);
+        }
+
+        ColumnConstraints colConstraints = new ColumnConstraints();
+        colConstraints.setHalignment(HPos.CENTER);
+
+        grid.getColumnConstraints().add(colConstraints);
+
+        Text brandName = new Text(results.getEconomicalBrand());
+        double lowestPrice = results.getLowestEconomical();
+        double highestPrice = results.getHighestEconomical();
+        String priceFormat = String.format("%.2f to %.2f", lowestPrice, highestPrice);
+
+        Text priceRange = new Text("Price range of economical brand is: " + priceFormat);
+
+        grid.add(brandName, 0, 0);
+        grid.add(priceRange, 0, 1);
+        grid.setAlignment(Pos.CENTER);
+        grid.setVgap(20);
+        grid.getStyleClass().add("brandPane");
+
+        brandGrid.add(grid, 0, 0);
+
+        grid = new GridPane();
+
+        for(int i = 0; i < 2; i++) {
+            RowConstraints rowConstraints = new RowConstraints();
+            rowConstraints.setValignment(VPos.CENTER);
+            rowConstraints.setPercentHeight(30/2);
+
+            grid.getRowConstraints().add(rowConstraints);
+        }
+
+        colConstraints = new ColumnConstraints();
+        colConstraints.setHalignment(HPos.CENTER);
+
+        grid.getColumnConstraints().add(colConstraints);
+
+        brandName = new Text(results.getExpensiveBrand());
+        lowestPrice = results.getLowestExpensive();
+        highestPrice = results.getHighestExpensive();
+        priceFormat = String.format("%.2f to %.2f", lowestPrice, highestPrice);
+
+        priceRange = new Text("Price range of expensive brand is: " + priceFormat);
+
+        grid.add(brandName, 0, 0);
+        grid.add(priceRange, 0, 1);
+        grid.setAlignment(Pos.CENTER);
+        grid.setVgap(20);
+        grid.getStyleClass().add("brandPane");
+
+        brandGrid.add(grid, 0, 1);
     }
 
 }

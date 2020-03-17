@@ -9,6 +9,10 @@ GridPane, AnchorPane, Pane {
     -fx-background-insets: 0, 1;
 }
 
+.brandPane {
+    -fx-background-color: #d2e2fc;
+}
+
 /*.chart-symbol { /* solid circle
     -fx-background-color: rgba(245, 66, 69, 0.5);
     -fx-background-radius: 5px;
