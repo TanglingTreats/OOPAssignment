@@ -40,12 +40,6 @@ public class Main extends Application
 
 	public static void main(String[] args) throws IOException
 	{
-
-//        String baseUrl = "https://www.fairprice.com.sg/search?query=sanitizer";
-//
-//        Scraper scraper = new Scraper();
-//
-//        scraper.getProduct(baseUrl);
        launch(args);
 
 //        testing

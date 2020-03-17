@@ -15,7 +15,7 @@ GridPane, AnchorPane, Pane {
     -fx-padding: 5px;
 }*/
 
-.default-color1.chart-symbol { /* solid square different colour */
+/*.default-color1.chart-symbol { /* solid square different colour
     -fx-background-color: rgba(66, 75, 254, 0.5);
     -fx-background-radius: 0px;
-}
+}*/
