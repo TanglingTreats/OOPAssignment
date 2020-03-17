@@ -53,32 +53,32 @@ public class Main extends Application
        launch(args);
 
 //        testing
-		Scraper.scrape("bodywash");
-		Database database = new Database();
-		Results results = new Results();
-		Product[] products = null;
-
-		products = new JsonFileHandler().readFile("bodywash", products);
-		database.update(products, results);
+//		Scraper.scrape("bodywash");
+//		Database database = new Database();
+//		Results results = new Results();
+//		Product[] products = null;
+//
+//		products = new JsonFileHandler().readFile("bodywash", products);
+//		database.update(products, results);
 
 //		for (Product x : products)
 //		{
 //			System.out.println(x.getColor());
 //		}
-
-		Arrays.sort(products, new Comparator<Product>() {
-			public int compare(Product product1, Product product2) {
-				return (int) (product1.getPricePerUnit() - product2.getPricePerUnit());
-			}
-		});
+//
+//		Arrays.sort(products, new Comparator<Product>() {
+//			public int compare(Product product1, Product product2) {
+//				return (int) (product1.getPricePerUnit() - product2.getPricePerUnit());
+//			}
+//		});
 
 //		database.sort(products, 0, products.length - 1,"PricePerUnit");
 //		Product[] filtered = database.filter(products, results.getTop3()[0].getBrand());
 
-		for (Product x : products)
-		{
-			System.out.println(x.getPricePerUnit());
-		}
+//		for (Product x : products)
+//		{
+//			System.out.println(x.getPricePerUnit());
+//		}
 
 	}
 }
