@@ -292,6 +292,8 @@ public class Controller {
 
     //Plot points on the scatter chart
     public void plotPriceToVolume() {
+        ArrayList<XYChart.Series> chartList;
+
         if(!priceToVolumeChart.getData().isEmpty())
         {
             priceToVolumeChart.getData().clear();
@@ -340,8 +342,11 @@ public class Controller {
         series1.setName("Fairprice");
 
         for(Product prod : fairpriceProd){
+
             series1.getData().add(new XYChart.Data(prod.getVolume(), prod.getPrice()));
+
         }
+
 
         XYChart.Series series2 = new XYChart.Series();
 
@@ -351,7 +356,11 @@ public class Controller {
             series2.getData().add(new XYChart.Data(prod.getVolume(), prod.getPrice()));
         }
 
+
+
         priceToVolumeChart.getData().addAll(series1, series2);
+
+
 
     }
 
