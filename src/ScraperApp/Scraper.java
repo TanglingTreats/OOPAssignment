@@ -1,5 +1,6 @@
 package ScraperApp;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
@@ -24,9 +25,15 @@ public class Scraper
 
 	public static void scrape(String input) throws IOException
 	{
-		fairpriceScraper(input);
-		giantScraper(input);
-		JsonWriter.writeJson();
+		File json = new File(JsonWriter.rootFolder);
+		try {
+			fairpriceScraper(input);
+			giantScraper(input);
+			JsonWriter.writeJson();
+		}
+		catch (Exception e) {
+			json.delete();
+		}
 	}
 
 	private static void fairpriceScraper(String query) throws IOException
@@ -40,7 +47,6 @@ public class Scraper
 		String fairpricedata = linkdata.childNode(0).toString();
 		JSONObject json = new JSONObject(fairpricedata);
 		JSONArray jsonarray = json.getJSONObject("props").getJSONObject("pageProps").getJSONObject("data").getJSONObject("data").getJSONObject("page").getJSONArray("layouts").getJSONObject(1).getJSONObject("value").getJSONObject("collection").getJSONArray("product");
-
 		for (int i = 0; i < jsonarray.length(); i++)
 		{
 				String productjson = jsonarray.get(i).toString();
