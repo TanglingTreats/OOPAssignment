@@ -170,52 +170,66 @@ public class Controller {
                     }
                     products = fileHandler.readFile(input);
                     if (products == null) {
-                        System.out.println("ERROR There is no products! Edwin Please handle this error.");
-                    }
+                        if(!invalidTxt.isVisible()) {
+                            invalidTxt.setVisible(true);
+                        }
+                        if(welcomeTxt.isVisible()) {
+                            welcomeTxt.setVisible(false);
+                        }
 
-
-                    if(!results.isNull())
-                    {
-                        System.out.println("Resetting");
-                        results = new Results();
-                        database = new Database();
                         contentGrid.getChildren().clear();
+                        brandGrid.getChildren().clear();
+                        pricePerUnitChart.getData().clear();
+                        priceToMeanDeltaChart.getData().clear();
+                        priceToVolumeChart.getData().clear();
+                    }
+                    else {
+                        if(!results.isNull())
+                        {
+                            System.out.println("Resetting");
+                            results = new Results();
+                            database = new Database();
+                            contentGrid.getChildren().clear();
+                        }
+
+                        products = database.update(products, results);
+                        numberOfProducts = products.length;
+
+                        // Calculate number of rows needed to display products
+                        contentNumOfRows = (int)Math.ceil(numberOfProducts/contentNumOfCol);
+
+                        this.prodPane = new GridPane[numberOfProducts];
+
+                        setProductPane(prodPane);
+
+                        Product[] top3Products = results.getTop3();
+
+                        if(!productArrayList.isEmpty())
+                        {
+                            productArrayList.clear();
+                        }
+
+                        for (Product x :products) {
+                            productArrayList.add(x);
+                        }
+
+                        // convert query into lowercase letters
+                        insertItemsIntoPane(prodPane, productArrayList);
+                        setGridPane(prodPane);
+                        initialiseContentGrid(contentNumOfRows);
+
+                        // Initialise charts section
+                        numOfBrands = database.getUniqueBrands();
+                        brands = database.getBrands();
+
+                        plotPriceToVolume();
+                        plotPriceToMeanDelta();
+                        plotPricePerUnit();
+                        setBrandGrid();
                     }
 
-                    products = database.update(products, results);
-                    numberOfProducts = products.length;
 
-                    // Calculate number of rows needed to display products
-                    contentNumOfRows = (int)Math.ceil(numberOfProducts/contentNumOfCol);
 
-                    this.prodPane = new GridPane[numberOfProducts];
-
-                    setProductPane(prodPane);
-
-                    Product[] top3Products = results.getTop3();
-
-                    if(!productArrayList.isEmpty())
-                    {
-                        productArrayList.clear();
-                    }
-
-                    for (Product x :products) {
-                        productArrayList.add(x);
-                    }
-
-                    // convert query into lowercase letters
-                    insertItemsIntoPane(prodPane, productArrayList);
-                    setGridPane(prodPane);
-                    initialiseContentGrid(contentNumOfRows);
-
-                    // Initialise charts section
-                    numOfBrands = database.getUniqueBrands();
-                    brands = database.getBrands();
-
-                    plotPriceToVolume();
-                    plotPriceToMeanDelta();
-                    plotPricePerUnit();
-                    setBrandGrid();
                 }
             }
         });
@@ -501,6 +515,7 @@ public class Controller {
         setStyle(numOfBrands, pricePerUnitChart);
 
         pricePerUnitChart.setLegendVisible(true);
+
     }
 
     private void setStyle(int numberOfBrands, ScatterChart chart) {
@@ -544,7 +559,7 @@ public class Controller {
         double highestPrice = results.getHighestEconomical();
         String priceFormat = String.format("%.2f to %.2f", lowestPrice, highestPrice);
 
-        Text priceRange = new Text("Price range of economical brand is: " + priceFormat);
+        Text priceRange = new Text("Adjusted price range of economical brand is: " + priceFormat);
 
         grid.add(brandName, 0, 0);
         grid.add(priceRange, 0, 1);
@@ -574,7 +589,7 @@ public class Controller {
         highestPrice = results.getHighestExpensive();
         priceFormat = String.format("%.2f to %.2f", lowestPrice, highestPrice);
 
-        priceRange = new Text("Price range of expensive brand is: " + priceFormat);
+        priceRange = new Text("Adjusted price range of expensive brand is: " + priceFormat);
 
         grid.add(brandName, 0, 0);
         grid.add(priceRange, 0, 1);
