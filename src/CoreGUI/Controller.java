@@ -39,7 +39,7 @@ public class Controller {
     private int contentNumOfRows = 3;
     private int numberOfProducts = 0;
     private float productHeight = 600f;
-    private float fontSize = 1.0f;
+    private float fontSize = 0.8f;
 
     private float alphaValue = 0.3f;
 
@@ -151,6 +151,13 @@ public class Controller {
                     if(welcomeTxt.isVisible()) {
                         welcomeTxt.setVisible(false);
                     }
+                    if(!contentGrid.getChildren().isEmpty()) {
+                        contentGrid.getChildren().clear();
+                        brandGrid.getChildren().clear();
+                        pricePerUnitChart.getData().clear();
+                        priceToMeanDeltaChart.getData().clear();
+                        priceToVolumeChart.getData().clear();
+                    }
                 }
                 else if(!input.isEmpty() || !input.isBlank()){
 
@@ -209,6 +216,20 @@ public class Controller {
                             productArrayList.clear();
                         }
 
+                        Arrays.sort(products, new Comparator<Product>() {
+                            public int compare(Product product1, Product product2) {
+                                if (product2.getPricePerUnit() >= product1.getPricePerUnit())
+                                {
+                                    return -1;
+                                }
+                                else if (product2.getPricePerUnit() < product1.getPricePerUnit()){
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            }
+                        });
+
                         for (Product x :products) {
                             productArrayList.add(x);
                         }
@@ -260,7 +281,7 @@ public class Controller {
         }
     }
 
-    // Adds images and texts according to the top 3 products
+    // Adds images and texts according to the products received from scraping
     public void insertItemsIntoPane(GridPane[] prodPane, ArrayList<Product> testProducts) {
 
         int counter = 0;
@@ -288,7 +309,9 @@ public class Controller {
                         prodPane[i].add(newTitle, 0, j);
                         break;
                     case 2:
-                        toPushText = new Text(String.format("$%.2f", testProducts.get(counter).getPrice()));
+                        toPushText = new Text(String.format("$%.2f (Price Per Unit: $%.2f)",
+                                testProducts.get(counter).getPrice(),
+                                testProducts.get(counter).getPricePerUnit()));
                         newTitle = new TextFlow(toPushText);
                         newTitle.setTextAlignment(TextAlignment.CENTER);
                         prodPane[i].add(newTitle, 0, j);
@@ -326,7 +349,7 @@ public class Controller {
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
-                if (product2.getVolume() >= product1.getVolume())
+                if (product2.getVolume() > product1.getVolume())
                 {
                     return 1;
                 }
@@ -339,14 +362,15 @@ public class Controller {
         });
 
         xAxisPTV.setUpperBound(Math.ceil(products[0].getVolume()) + (Math.ceil(products[0].getVolume())/10));
-        if(products[1] instanceof aboveOneKilogram) {
+        if(products[0] instanceof aboveOneKilogram) {
             xAxisPTV.setLowerBound(0);
             xAxisPTV.setTickUnit(products[0].getVolume() % 10);
         }
-        else if(products[1] instanceof belowOneKilogram) {
+        else if(products[0] instanceof belowOneKilogram) {
             xAxisPTV.setLowerBound(Math.floor(products[products.length-1].getVolume()) / 2);
             xAxisPTV.setTickUnit(Math.ceil(products[0].getVolume() / 10));
         }
+
         xAxisPTV.setLabel("Volume");
         xAxisPTV.setAutoRanging(false);
 
@@ -511,6 +535,8 @@ public class Controller {
             pricePerUnitChart.getData().add(chartSeries);
         }
 
+        System.out.println("Number of brands: " + numOfBrands);
+
         pricePerUnitChart.applyCss();
         setStyle(numOfBrands, pricePerUnitChart);
 
@@ -544,7 +570,7 @@ public class Controller {
         for(int i = 0; i < 2; i++) {
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.setValignment(VPos.CENTER);
-            rowConstraints.setPercentHeight(30/2);
+            rowConstraints.setPrefHeight(30/2);
 
             grid.getRowConstraints().add(rowConstraints);
         }
@@ -574,7 +600,7 @@ public class Controller {
         for(int i = 0; i < 2; i++) {
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.setValignment(VPos.CENTER);
-            rowConstraints.setPercentHeight(30/2);
+            rowConstraints.setPrefHeight(30/2);
 
             grid.getRowConstraints().add(rowConstraints);
         }

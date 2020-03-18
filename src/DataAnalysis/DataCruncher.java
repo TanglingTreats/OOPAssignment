@@ -146,9 +146,9 @@ public class DataCruncher
 		final double fQ3 = Q3;
 
 		if (option.equals("Volume"))
-			products = Arrays.stream(products).filter(elem -> elem.getVolume() > (fQ1 - IQR) && elem.getVolume() < (fQ3 + IQR)).toArray(Product[]::new);
+			products = Arrays.stream(products).filter(elem -> elem.getVolume() >= (fQ1 - IQR) && elem.getVolume() <= (fQ3 + IQR)).toArray(Product[]::new);
 		else if (option.equals("Price"))
-			products = Arrays.stream(products).filter(elem -> elem.getPrice() > (fQ1 - IQR) && elem.getPrice() < (fQ3 + IQR)).toArray(Product[]::new);
+			products = Arrays.stream(products).filter(elem -> elem.getPrice() >= (fQ1 - IQR) && elem.getPrice() <= (fQ3 + IQR)).toArray(Product[]::new);
 
 		return products;
 	}

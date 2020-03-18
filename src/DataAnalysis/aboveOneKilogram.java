@@ -3,15 +3,15 @@ package DataAnalysis;
 public class aboveOneKilogram extends Product
 {
 	//  Price per litre
-	private double PricePerUnit;
+	private double pricePerUnit;
 
 	public void setPricePerUnit()
 	{
-		PricePerUnit = getPrice() / getVolume();
+		pricePerUnit = getPrice() / getVolume();
 	}
 
 	public double getPricePerUnit()
 	{
-		return PricePerUnit;
+		return pricePerUnit;
 	}
 }
