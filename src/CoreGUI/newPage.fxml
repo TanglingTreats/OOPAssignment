@@ -96,6 +96,7 @@
                                       <Font size="20.0" />
                                   </font>
                               </Text>
+                        <TextFlow fx:id="popularKeywords" layoutX="163.0" layoutY="68.0" prefHeight="24.0" prefWidth="379.0" />
                           </children>
                       </AnchorPane>
                   </content>

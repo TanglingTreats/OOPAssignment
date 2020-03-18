@@ -18,15 +18,15 @@ public class JsonWriter
 		{
 			objects = new JSONObject();
 			ScraperProduct obj = (ScraperProduct) a;
-			objects.put("url", obj.url);
-			objects.put("img", obj.image);
-			objects.put("name", obj.title);
-			objects.put("brand", obj.brand);
-			objects.put("category", obj.category);
-			objects.put("supermarket", obj.supermarket);
-			objects.put("supermarketImg", obj.supermarketImage);
-			objects.put("vol", obj.volume);
-			objects.put("price", obj.price);
+			objects.put("url", obj.getUrl());
+			objects.put("img", obj.getImage());
+			objects.put("name", obj.getTitle());
+			objects.put("brand", obj.getBrand());
+			objects.put("category", obj.getCategory());
+			objects.put("supermarket", obj.getSupermarket());
+			objects.put("supermarketImg", obj.getSupermarketImage());
+			objects.put("vol", obj.getVolume());
+			objects.put("price", obj.getPrice());
 			arrays.put(objects);
 		}
 

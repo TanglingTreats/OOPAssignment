@@ -92,12 +92,13 @@ public class Controller {
 
     private GridPane[] prodPane = new GridPane[numberOfProducts];
 
-    private Text keyword1 = new Text("Sanitiser");
-    private Text keyword2 = new Text("Bodywash");
-    private Text keyword3 = new Text("Wheat Biscuits");
+    private Text keyword1 = new Text("Sanitiser, ");
+    private Text keyword2 = new Text("Bodywash, ");
+    private Text keyword3 = new Text("Wheat Biscuits, ");
     private Text keyword4 = new Text("Detergent");
 
-    private TextFlow popularKeywords = new TextFlow(keyword1, keyword2, keyword3);
+    @FXML
+    private TextFlow popularKeywords;
 
     private JsonFileHandler fileHandler;
     private Database database;
@@ -108,6 +109,10 @@ public class Controller {
 
     public void initialize() {
         System.out.println("Initialize ran!");
+
+        popularKeywords.getChildren().addAll(keyword1, keyword2, keyword3, keyword4);
+        //popularKeywords.setTextAlignment(TextAlignment.CENTER);
+
 
         fileHandler = new JsonFileHandler();
         database = new Database();
@@ -361,7 +366,7 @@ public class Controller {
             }
         });
 
-        xAxisPTV.setUpperBound(Math.ceil(products[0].getVolume()) + (Math.ceil(products[0].getVolume())/10));
+        xAxisPTV.setUpperBound(Math.ceil(Math.ceil(products[0].getVolume()) + (Math.ceil(products[0].getVolume())/10)));
         if(products[0] instanceof aboveOneKilogram) {
             xAxisPTV.setLowerBound(0);
             xAxisPTV.setTickUnit(products[0].getVolume() % 10);
@@ -440,7 +445,7 @@ public class Controller {
         });
 
         yAxisPTMD.setUpperBound(Math.ceil(products[0].getMeanDelta()) + (Math.ceil(products[0].getMeanDelta()/8)));
-        yAxisPTMD.setLowerBound(-Math.floor(products[0].getMeanDelta()));
+        yAxisPTMD.setLowerBound(-Math.floor(products[0].getMeanDelta()) - (Math.ceil(products[0].getMeanDelta()/8)));
         yAxisPTMD.setTickUnit(Math.ceil(products[0].getMeanDelta() / 10));
         yAxisPTMD.setAutoRanging(false);
         yAxisPTMD.setLabel("Mean Delta");
