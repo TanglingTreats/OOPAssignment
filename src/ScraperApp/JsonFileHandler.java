@@ -15,16 +15,6 @@ public class JsonFileHandler
 		// Empty constructor
 	}
 
-	public void CreateFile(String fileName, JSONObject obj)
-	{
-
-	}
-
-	public void UpdateFile(String fileName, JSONObject obj)
-	{
-
-	}
-
 	public Product[] readFile(String category)
 	{
 		Product[] products = null;
@@ -44,6 +34,7 @@ public class JsonFileHandler
 			int belowOne = 0;
 			int chosenWeightClass;
 
+			// Counting number of objects above weight threshold
 			for (JSONObject product : (Iterable<JSONObject>) jsonArray)
 			{
 				if (product.get("category").equals(category))
@@ -61,7 +52,10 @@ public class JsonFileHandler
 				}
 			}
 
+			// Choosing weight class
 			chosenWeightClass = Math.max(aboveOne, belowOne);
+
+			// Creating a x-sized array for the chosenWeightClass
 			products = new Product[chosenWeightClass];
 
 
