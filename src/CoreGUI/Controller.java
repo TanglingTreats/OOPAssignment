@@ -545,6 +545,24 @@ public class Controller {
         pricePerUnitChart.applyCss();
         setStyle(numOfBrands, pricePerUnitChart);
 
+        double[] statResults = results.getStatistics();
+        double mean = statResults[0];
+        double sd = statResults[1];
+
+        XYChart.Series statsSeries = new XYChart.Series();
+
+        statsSeries.setName("Intervals");
+
+        statsSeries.getData().add(new XYChart.Data(mean - sd, 1));
+        statsSeries.getData().add(new XYChart.Data(mean + sd, 1));
+        statsSeries.getData().add(new XYChart.Data(mean, 1));
+
+        pricePerUnitChart.getData().add(statsSeries);
+
+        setStatsStyle(numOfBrands, pricePerUnitChart);
+
+
+
         pricePerUnitChart.setLegendVisible(true);
 
     }
@@ -567,6 +585,20 @@ public class Controller {
         chart.setStyle(
                 "-fx-font-size: " + fontSize +"em;"
         );
+    }
+
+    private void setStatsStyle(int numOfBrands , ScatterChart chart) {
+        Set<Node> nodes = chart.lookupAll(".series" + numOfBrands);
+        String colorString = String.format("%d, %d, %d", 0, 0, 0);
+        for(Node n : nodes) {
+            n.setStyle(
+                    "-fx-background-color: rgba(" + colorString + ", " + 1 + ");\n"+
+                    "-fx-background-radius: 0;\n" +
+                    "-fx-background-insets: 0;\n" +
+                    "-fx-shape: \"M2,0 L5,4 L8,0 L10,0 L10,2 L6,5 L10,8 L10,10 L8,10 L5,6 L2,\n" +
+                    " 10 L0,10 L0,8 L4,5 L0,2 L0,0 Z\";"
+            );
+        }
     }
 
     private void setBrandGrid() {
