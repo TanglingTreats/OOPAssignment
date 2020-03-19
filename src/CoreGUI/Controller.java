@@ -542,9 +542,6 @@ public class Controller {
 
         System.out.println("Number of brands: " + numOfBrands);
 
-        pricePerUnitChart.applyCss();
-        setStyle(numOfBrands, pricePerUnitChart);
-
         double[] statResults = results.getStatistics();
         double mean = statResults[0];
         double sd = statResults[1];
@@ -559,9 +556,9 @@ public class Controller {
 
         pricePerUnitChart.getData().add(statsSeries);
 
+        pricePerUnitChart.applyCss();
+        setStyle(numOfBrands, pricePerUnitChart);
         setStatsStyle(numOfBrands, pricePerUnitChart);
-
-
 
         pricePerUnitChart.setLegendVisible(true);
 
@@ -575,9 +572,9 @@ public class Controller {
             String colorString = String.format("%d, %d, %d", color.getRed(), color.getGreen(), color.getBlue());
             for(Node n : nodes) {
                 n.setStyle(
-                        "-fx-background-color: rgba(" + colorString + ", " + alphaValue + ");\n" +
-                                "-fx-background-radius: 5px;\n" +
-                                "-fx-padding: 5px;\n"
+                        "-fx-background-color: rgba(" + colorString + ", " + alphaValue + ");\n"
+//                                "-fx-background-radius: 5px;\n" +
+//                                "-fx-padding: 5px;\n"
                 );
             }
         }
