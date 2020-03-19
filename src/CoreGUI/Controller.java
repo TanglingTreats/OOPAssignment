@@ -43,6 +43,8 @@ public class Controller {
 
     private float alphaValue = 0.3f;
 
+    private float screenPaddingConst = 160.0f;
+
     int numOfBrands = 0;
     String[] brands;
 
@@ -111,8 +113,6 @@ public class Controller {
         System.out.println("Initialize ran!");
 
         popularKeywords.getChildren().addAll(keyword1, keyword2, keyword3, keyword4);
-        //popularKeywords.setTextAlignment(TextAlignment.CENTER);
-
 
         fileHandler = new JsonFileHandler();
         database = new Database();
@@ -133,7 +133,7 @@ public class Controller {
 
         this.contentGrid.setPadding(new Insets(5, 10, 10, 10));
 
-        this.anchorPane.setPrefHeight((300 * rowsNeeded ) + (this.contentGrid.getVgap() * rowsNeeded) + 200);
+        this.anchorPane.setPrefHeight((300 * rowsNeeded ) + (this.contentGrid.getVgap() * rowsNeeded) + screenPaddingConst);
 
         for(int i = 0; i < currentNumOfRows; i++) {
             this.contentGrid.getRowConstraints().add(new RowConstraints(300));
@@ -632,7 +632,3 @@ public class Controller {
     }
 
 }
-
-
-
-
