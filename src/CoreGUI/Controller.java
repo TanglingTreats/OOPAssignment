@@ -3,9 +3,12 @@ package CoreGUI;
 import java.awt.*;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 import ScraperApp.Scraper;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -19,6 +22,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -282,6 +286,7 @@ public class Controller {
             panel.getStyleClass().add("productPane");
             panel.setVgap(5.0);
             panel.setPrefHeight(360);
+
             prodPane[i] = panel;
         }
     }
@@ -290,6 +295,7 @@ public class Controller {
     public void insertItemsIntoPane(GridPane[] prodPane, ArrayList<Product> testProducts) {
 
         int counter = 0;
+
         for(int i = 0; i < numberOfProducts; i++) {
             for(int j = 0; j < numberOfRows; j++) {
                 TextFlow newTitle;
@@ -299,7 +305,7 @@ public class Controller {
                 {
                     case 0:
                         if(testProducts.get(counter).getImage() != null || !testProducts.get(counter).getImage().isEmpty() || !testProducts.get(counter).getImage().isBlank()) {
-                            Image image = new Image(testProducts.get(counter).getImage(), 0, productHeight / numberOfRows-1, true, true, true);
+                            Image image = new Image(testProducts.get(counter).getImage(), 250, productHeight / numberOfRows-1, true, true, true);
                             ImageView iv1 = new ImageView();
                             iv1.setImage(image);
                             prodPane[i].add(iv1, 0, j);
@@ -324,6 +330,31 @@ public class Controller {
                 }
 
             }
+
+            final String url = testProducts.get(counter).getSupermarket().equals("Fairprice") ?
+                    String.format("https://%s", testProducts.get(counter).getLink()) : testProducts.get(counter).getLink();
+
+
+            System.out.println("URL: " + url);
+            prodPane[i].setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if( Desktop.isDesktopSupported() ){
+                        new Thread(() -> {
+                            try {
+                                System.out.println("Opening browser");
+                                Desktop.getDesktop().browse(new URI(url));
+                                System.out.println("After opening browser");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (URISyntaxException e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
+                    }
+                }
+            });
+
             counter++;
         }
 
@@ -350,7 +381,6 @@ public class Controller {
         {
             volumeToPriceChart.getData().clear();
         }
-
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {

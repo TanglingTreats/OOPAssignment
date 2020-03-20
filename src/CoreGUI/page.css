@@ -9,6 +9,10 @@ GridPane, AnchorPane, Pane {
     -fx-background-insets: 0, 1;
 }
 
+.productPane:hover {
+    -fx-background-color:#657a8c;
+}
+
 .brandPane {
     -fx-background-color: #d2e2fc;
 }
