@@ -27,7 +27,7 @@ public class Database
 	public Product[] update(Product[] products, Results results)
 	{
 		DataCruncher bigboy = new DataCruncher();
-		products = bigboy.removeOutliers(products, "Volume");
+//		products = bigboy.removeOutliers(products, "Volume");
 		products = bigboy.removeOutliers(products, "Price");
 
 		int count = products.length;
