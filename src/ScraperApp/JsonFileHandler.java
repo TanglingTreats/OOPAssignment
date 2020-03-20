@@ -68,11 +68,11 @@ public class JsonFileHandler
 					productWeight = Double.parseDouble(product.get("vol").toString()) <= 25 ? 1 : 0;
 					if (chosenWeightClass == aboveOne && productWeight == 1)
 					{
-						object = new aboveOneKilogram();
+						object = new AboveOneKilogram();
 						pass = true;
 					} else if (chosenWeightClass == belowOne && productWeight == 0)
 					{
-						object = new belowOneKilogram();
+						object = new BelowOneKilogram();
 						pass = true;
 					}
 

@@ -367,11 +367,11 @@ public class Controller {
         });
 
         xAxisPTV.setUpperBound(Math.ceil(Math.ceil(products[0].getVolume()) + (Math.ceil(products[0].getVolume())/10)));
-        if(products[0] instanceof aboveOneKilogram) {
+        if(products[0] instanceof AboveOneKilogram) {
             xAxisPTV.setLowerBound(0);
             xAxisPTV.setTickUnit(products[0].getVolume() % 10);
         }
-        else if(products[0] instanceof belowOneKilogram) {
+        else if(products[0] instanceof BelowOneKilogram) {
             xAxisPTV.setLowerBound(Math.floor(products[products.length-1].getVolume()) / 2);
             xAxisPTV.setTickUnit(Math.ceil(products[0].getVolume() / 10));
         }
@@ -548,7 +548,7 @@ public class Controller {
 
         XYChart.Series statsSeries = new XYChart.Series();
 
-        //statsSeries.setName("Intervals");
+        statsSeries.setName("Intervals");
 
         statsSeries.getData().add(new XYChart.Data(mean - sd, 1));
         statsSeries.getData().add(new XYChart.Data(mean + sd, 1));
