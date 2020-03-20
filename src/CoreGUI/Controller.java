@@ -63,7 +63,7 @@ public class Controller {
     private Text invalidTxt;
 
     @FXML
-    private ScatterChart priceToVolumeChart;
+    private ScatterChart volumeToPriceChart;
     @FXML
     private NumberAxis xAxisPTV;
     @FXML
@@ -161,7 +161,7 @@ public class Controller {
                         brandGrid.getChildren().clear();
                         pricePerUnitChart.getData().clear();
                         priceToMeanDeltaChart.getData().clear();
-                        priceToVolumeChart.getData().clear();
+                        volumeToPriceChart.getData().clear();
                     }
                 }
                 else if(!input.isEmpty() || !input.isBlank()){
@@ -193,7 +193,7 @@ public class Controller {
                         brandGrid.getChildren().clear();
                         pricePerUnitChart.getData().clear();
                         priceToMeanDeltaChart.getData().clear();
-                        priceToVolumeChart.getData().clear();
+                        volumeToPriceChart.getData().clear();
                     }
                     else {
                         if(!results.isNull())
@@ -248,7 +248,7 @@ public class Controller {
                         numOfBrands = database.getUniqueBrands();
                         brands = database.getBrands();
 
-                        plotPriceToVolume();
+                        plotVolumeToPrice();
                         plotPriceToMeanDelta();
                         plotPricePerUnit();
                         setBrandGrid();
@@ -344,11 +344,11 @@ public class Controller {
     }
 
     // ---------------Plot points on the scatter chart-----------------
-    public void plotPriceToVolume() {
+    public void plotVolumeToPrice() {
 
-        if(!priceToVolumeChart.getData().isEmpty())
+        if(!volumeToPriceChart.getData().isEmpty())
         {
-            priceToVolumeChart.getData().clear();
+            volumeToPriceChart.getData().clear();
         }
 
 
@@ -399,7 +399,7 @@ public class Controller {
         yAxisPTV.setLabel("Price");
         yAxisPTV.setAutoRanging(false);
 
-        priceToVolumeChart.setTitle("Price To Volume");
+        volumeToPriceChart.setTitle("Volume To Price");
 
         for(int i = 0; i < numOfBrands; i++) {
             Product[] brandProduct = database.filterBrand(products, brands[i]);
@@ -412,11 +412,11 @@ public class Controller {
                 chartSeries.getData().add(new XYChart.Data(prod.getVolume(), prod.getPrice()));
             }
 
-            priceToVolumeChart.getData().add(chartSeries);
+            volumeToPriceChart.getData().add(chartSeries);
         }
-        priceToVolumeChart.applyCss();
-        setStyle(numOfBrands, priceToVolumeChart);
-        priceToVolumeChart.setLegendVisible(false);
+        volumeToPriceChart.applyCss();
+        setStyle(numOfBrands, volumeToPriceChart);
+        volumeToPriceChart.setLegendVisible(false);
 
 
     }
@@ -548,7 +548,7 @@ public class Controller {
 
         XYChart.Series statsSeries = new XYChart.Series();
 
-        statsSeries.setName("Intervals");
+        //statsSeries.setName("Intervals");
 
         statsSeries.getData().add(new XYChart.Data(mean - sd, 1));
         statsSeries.getData().add(new XYChart.Data(mean + sd, 1));

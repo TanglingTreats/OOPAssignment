@@ -31,7 +31,7 @@
             <RowConstraints maxHeight="325.0" minHeight="10.0" prefHeight="266.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ScatterChart fx:id="priceToVolumeChart">
+            <ScatterChart fx:id="volumeToPriceChart">
               <xAxis>
                   <NumberAxis side="BOTTOM" fx:id="xAxisPTV" />
               </xAxis>
