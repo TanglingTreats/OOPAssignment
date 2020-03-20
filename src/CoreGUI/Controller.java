@@ -331,9 +331,7 @@ public class Controller {
 
             }
 
-            //final String url = testProducts.get(counter).getSupermarket().equals("Fairprice") ?
-              //      String.format("https://%s", testProducts.get(counter).getLink()) : testProducts.get(counter).getLink();
-            String url = testProducts.get(counter).getLink();
+            final String url = testProducts.get(counter).getLink();
 
 
             System.out.println("URL: " + url);
