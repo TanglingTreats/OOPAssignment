@@ -36,8 +36,8 @@ import ScraperApp.JsonFileHandler;
 import DataAnalysis.*;
 
 public class Controller {
-    // Properties
 
+    // ------------------- Properties ----------------
     private final int numberOfRows = 3;
     private final float contentNumOfCol = 3.0f;
     private int contentNumOfRows = 3;
@@ -113,47 +113,63 @@ public class Controller {
 
     private ArrayList<Product> productArrayList = new ArrayList<Product>();
 
+    // Starting method for Controller
     public void initialize() {
         System.out.println("Initialize ran!");
 
+        // Add keywords into TextFlow object
         popularKeywords.getChildren().addAll(keyword1, keyword2, keyword3, keyword4);
 
+        // Initialises required objects for data manipulation
         fileHandler = new JsonFileHandler();
         database = new Database();
         results = new Results();
         products = null;
 
+        // Calls function that adds event listeners to specified elements
         initialiseEventListeners();
     }
 
+    // Method: Initialises content grid to add rows and padding for holding pulled query
     public void initialiseContentGrid(int rowsNeeded) {
         int currentNumOfRows = contentGrid.getRowCount();
 
+        // Add rows to Grid Pane that holds products
         for(int i = currentNumOfRows; i < rowsNeeded; i++) {
             this.contentGrid.addRow(i);
         }
+
+        // Sets horizontal and vertical gap within Grid Pane
         this.contentGrid.setHgap(10);
         this.contentGrid.setVgap(20);
 
+        // Sets padding of Grid Pane to align itself within the application
         this.contentGrid.setPadding(new Insets(5, 10, 10, 10));
 
+        // Sets height of Anchor Pane to a proper height to show all the products
         this.anchorPane.setPrefHeight((300 * rowsNeeded ) + (this.contentGrid.getVgap() * rowsNeeded) + screenPaddingConst);
 
+        // Add row constraints to each row in the content grid
         for(int i = 0; i < currentNumOfRows; i++) {
             this.contentGrid.getRowConstraints().add(new RowConstraints(300));
         }
 
     }
 
+    // Method: To add event listeners for the search bar
     public void initialiseEventListeners()
     {
-
+        // Adds a key press keyboard event for the search box
         searchText.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.ENTER) {
 
+                // Converts input into lowercase for simpler text checking
                 String input = searchText.getText().toLowerCase();
 
+                // Checks for empty or blank input
                 if(input.isBlank() || input.isEmpty() || input == " " || input == ""){
+
+                    // This section sets the appropriate error message and resets content
                     if(!invalidTxt.isVisible()) {
                         invalidTxt.setVisible(true);
                     }
@@ -178,13 +194,18 @@ public class Controller {
                     }
                     System.out.println("Input in lowercase: " + input);
 
+                    // Calls Scraper to get results from supermarket websites
                     try {
                         Scraper.scrape(input);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    // Obtain an array of Products from JSON file through file handler
                     products = fileHandler.readFile(input);
+
+                    // Checks if the product is empty and execute proper responses
                     if (products == null) {
                         if(!invalidTxt.isVisible()) {
                             invalidTxt.setVisible(true);
@@ -200,6 +221,8 @@ public class Controller {
                         volumeToPriceChart.getData().clear();
                     }
                     else {
+
+                        // Clears previous searches
                         if(!results.isNull())
                         {
                             System.out.println("Resetting");
@@ -207,24 +230,27 @@ public class Controller {
                             database = new Database();
                             contentGrid.getChildren().clear();
                         }
-                        System.out.println("Legnth " + products.length);
+
+                        // Update database object with latest crawl
                         products = database.update(products, results);
                         numberOfProducts = products.length;
 
                         // Calculate number of rows needed to display products
                         contentNumOfRows = (int)Math.ceil(numberOfProducts/contentNumOfCol);
 
+                        // Initalises Grid Pane that is responsible for displaying products from query
                         this.prodPane = new GridPane[numberOfProducts];
 
+                        // Set up Grid Pane to hold products
                         setProductPane(prodPane);
 
-                        Product[] top3Products = results.getTop3();
-
+                        // Clears ArrayList before pushing new items
                         if(!productArrayList.isEmpty())
                         {
                             productArrayList.clear();
                         }
 
+                        // Sorts Products array before pushing them into an ArrayList for display
                         Arrays.sort(products, new Comparator<Product>() {
                             public int compare(Product product1, Product product2) {
                                 if (product2.getPricePerUnit() >= product1.getPricePerUnit())
@@ -239,6 +265,7 @@ public class Controller {
                             }
                         });
 
+                        // Add products from scraping into ArrayList
                         for (Product x :products) {
                             productArrayList.add(x);
                         }
@@ -252,6 +279,8 @@ public class Controller {
                         numOfBrands = database.getUniqueBrands();
                         brands = database.getBrands();
 
+                        // The following section initialises other parts of the GUI
+                        // including plotting of scatter charts and brand summary
                         plotVolumeToPrice();
                         plotPriceToMeanDelta();
                         plotPricePerUnit();
@@ -292,10 +321,11 @@ public class Controller {
     }
 
     // Adds images and texts according to the products received from scraping
-    public void insertItemsIntoPane(GridPane[] prodPane, ArrayList<Product> testProducts) {
-
+    public void insertItemsIntoPane(GridPane[] prodPane, ArrayList<Product> prodArrayList) {
+        // Local counter to loop through the product array list
         int counter = 0;
 
+        // Inserts relevant product information into product Grid Panes
         for(int i = 0; i < numberOfProducts; i++) {
             for(int j = 0; j < numberOfRows; j++) {
                 TextFlow newTitle;
@@ -303,38 +333,40 @@ public class Controller {
 
                 switch (j)
                 {
+                    // Image case
                     case 0:
-                        if(testProducts.get(counter).getImage() != null || !testProducts.get(counter).getImage().isEmpty() || !testProducts.get(counter).getImage().isBlank()) {
-                            Image image = new Image(testProducts.get(counter).getImage(), 250, productHeight / numberOfRows-1, true, true, true);
+                        if(prodArrayList.get(counter).getImage() != null || !prodArrayList.get(counter).getImage().isEmpty() || !prodArrayList.get(counter).getImage().isBlank()) {
+                            Image image = new Image(prodArrayList.get(counter).getImage(), 250, productHeight / numberOfRows-1, true, true, true);
                             ImageView iv1 = new ImageView();
                             iv1.setImage(image);
                             prodPane[i].add(iv1, 0, j);
                         }
 
                         break;
+                    // Title case
                     case 1:
-                        toPushText = new Text(testProducts.get(counter).getTitle());
+                        toPushText = new Text(prodArrayList.get(counter).getTitle());
                         newTitle = new TextFlow(toPushText);
                         newTitle.setTextAlignment(TextAlignment.CENTER);
 
                         prodPane[i].add(newTitle, 0, j);
                         break;
+                    // Price case
                     case 2:
                         toPushText = new Text(String.format("$%.2f (Price Per Unit: $%.2f)",
-                                testProducts.get(counter).getPrice(),
-                                testProducts.get(counter).getPricePerUnit()));
+                                prodArrayList.get(counter).getPrice(),
+                                prodArrayList.get(counter).getPricePerUnit()));
                         newTitle = new TextFlow(toPushText);
                         newTitle.setTextAlignment(TextAlignment.CENTER);
                         prodPane[i].add(newTitle, 0, j);
                         break;
                 }
-
             }
 
-            final String url = testProducts.get(counter).getLink();
+            // Stores url of product for redirection
+            final String url = prodArrayList.get(counter).getLink();
 
-
-            System.out.println("URL: " + url);
+            // Sets mouse event listener to allow products to be clicked
             prodPane[i].setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
@@ -374,6 +406,7 @@ public class Controller {
     }
 
     // ---------------Plot points on the scatter chart-----------------
+    // Plots volume to price chart
     public void plotVolumeToPrice() {
 
         if(!volumeToPriceChart.getData().isEmpty())
@@ -395,7 +428,10 @@ public class Controller {
             }
         });
 
+        // ---------------------- Sets X axis of the chart ----------------------
         xAxisPTV.setUpperBound(Math.ceil(Math.ceil(products[0].getVolume()) + (Math.ceil(products[0].getVolume())/10)));
+
+        // Checks for product volume to properly configure lower bound and ticks of X axis
         if(products[0] instanceof AboveOneKilogram) {
             xAxisPTV.setLowerBound(0);
             xAxisPTV.setTickUnit(products[0].getVolume() % 10);
@@ -421,7 +457,7 @@ public class Controller {
                 }
             }
         });
-
+        // ------------------------ Sets Y Axis -----------------------
         yAxisPTV.setLowerBound(0);
         yAxisPTV.setUpperBound(Math.ceil(products[0].getPrice()) + Math.ceil(products[0].getPrice() / 8));
         yAxisPTV.setTickUnit(Math.ceil(products[0].getPrice() / 10));
@@ -430,6 +466,7 @@ public class Controller {
 
         volumeToPriceChart.setTitle("Volume To Price");
 
+        // Create individual series for each brand of products
         for(int i = 0; i < numOfBrands; i++) {
             Product[] brandProduct = database.filterBrand(products, brands[i]);
 
@@ -443,6 +480,7 @@ public class Controller {
 
             volumeToPriceChart.getData().add(chartSeries);
         }
+        // Force custom CSS
         volumeToPriceChart.applyCss();
         setStyle(numOfBrands, volumeToPriceChart);
         volumeToPriceChart.setLegendVisible(false);
@@ -457,7 +495,6 @@ public class Controller {
         }
 
         priceToMeanDeltaChart.setTitle("Price to Mean Delta");
-
 
         Arrays.sort(products, new Comparator<Product>() {
             public int compare(Product product1, Product product2) {
@@ -519,6 +556,7 @@ public class Controller {
 
     }
 
+    // Plot Price Per Unit charts
     private void plotPricePerUnit(){
         if(!pricePerUnitChart.getData().isEmpty()) {
             pricePerUnitChart.getData().clear();
@@ -593,6 +631,7 @@ public class Controller {
 
     }
 
+    // Method: Sets CSS style for custom coloring for each brand of products
     private void setStyle(int numberOfBrands, ScatterChart chart) {
         for(int i = 0; i < numberOfBrands; i++) {
             Set<Node> nodes = chart.lookupAll(".series" + i);
@@ -613,6 +652,7 @@ public class Controller {
         );
     }
 
+    // Method: Sets CSS for interval ticks for clear indication
     private void setStatsStyle(int numOfBrands , ScatterChart chart) {
         Set<Node> nodes = chart.lookupAll(".series" + numOfBrands);
         String colorString = String.format("%d, %d, %d", 0, 0, 0);
@@ -627,9 +667,11 @@ public class Controller {
         }
     }
 
+    // Method: Initialises Grid Pane that hold the brand summary
     private void setBrandGrid() {
         GridPane grid = new GridPane();
 
+        // Creates row constraints for vertical layout
         for(int i = 0; i < 2; i++) {
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.setValignment(VPos.CENTER);
@@ -638,6 +680,7 @@ public class Controller {
             grid.getRowConstraints().add(rowConstraints);
         }
 
+        // Create column constraint for proper horizontal layout
         ColumnConstraints colConstraints = new ColumnConstraints();
         colConstraints.setHalignment(HPos.CENTER);
 
