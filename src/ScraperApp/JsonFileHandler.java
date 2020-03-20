@@ -89,8 +89,7 @@ public class JsonFileHandler
 
 						if (object.getSupermarket().equals("Fairprice"))
 						{
-							object = (FairPrice) object;
-							object.setLink(object.getLink());
+							object.setLink("https://" + object.getLink());
 						}
 
 						products[position] = object;
