@@ -5,21 +5,35 @@ import java.lang.Math;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Dictionary;
-import java.util.stream.Collectors;
 
 public class DataCruncher
 {
-	public Product[] crunch(double cumulativePrice, int count, Product[] products, Results results, Dictionary<String, Color> brandColors)
+	public Product[] crunch(double cumulativePrice, int count, Product[] products,
+							Results results, Dictionary<String, Color> brandColors)
 	{
+//		this values are precalculated in database.update method,
+//		so that i do not have to iterate through the array once more here
 		double mean = cumulativePrice / count;
 		double variance = 0;
 
 		for (Product product : products)
 		{
+//			This sets the color of a product based on it's brand
+//			The brandColors.get method is built in; it gets the value based on the key provided.
+//			I am providing the product's brand here.
 			product.setColor(brandColors.get(product.getBrand()));
+//			This method sets the product's price difference from the mean.
+//			MeanDelta does not really make sense but i did not want to give it such a long name
 			product.setMeanDelta(product.getPricePerUnit() - mean);
 
+//			calculation of variance, standard math things. This is summation portion of it
 			variance += Math.pow((product.getPricePerUnit() - mean), 2);
+
+//			This portion is setting the range for the economical brand
+//			It is essentially a linear sort for the lowest and highest prices.
+
+//			product.getBrand().equals(results.getEconomicalBrand())
+//			will be true is the product's brand is the same as the most economical's brand
 			if (product.getBrand().equals(results.getEconomicalBrand()))
 			{
 				if (results.economicalIsNull())
@@ -35,6 +49,7 @@ public class DataCruncher
 				}
 			}
 
+//			same thing as above, but for the most expensive brand
 			if (product.getBrand().equals(results.getExpensiveBrand()))
 			{
 				if (results.expensiveIsNull())
@@ -51,8 +66,11 @@ public class DataCruncher
 			}
 		}
 
+//		After the entire iteration, variance has been found, so we can calculate the SD here
 		double SD = Math.sqrt(variance / count);
+//		setting the statistics, mean and SD
 		results.setStatistics(new double[]{mean, SD});
+//		returns the products
 		return products;
 	}
 
@@ -62,8 +80,8 @@ public class DataCruncher
 		double Q3 = 0;
 		double IQR;
 		int medianIndex, Q1Index, Q3Index;
-//		Sort first
 
+//		Sort first, using the built in array.sort function, and a lambda call in the comparator.
 		if (option.equals("Volume"))
 		{
 			Arrays.sort(products, new Comparator<Product>()
@@ -91,11 +109,14 @@ public class DataCruncher
 //			if data set is even, halve the data set and find q1 and q3 as the middle of the two halves
 //			get middle two numbers, sum and halve to find median
 
+//			Q1 will always be at the 25th percentile of the product, hence this.
 			Q1Index = (int) Math.ceil(products.length / 4.0);
+//			Q3 will be at median + 25th percentile (75th percentile), hence this.
 			Q3Index = ((products.length / 2) + 1) + (int) Math.floor(products.length / 4.0);
 
 			if (option.equals("Volume"))
 			{
+//				index - 1 because array starts from 0
 				Q1 = products[Q1Index - 1].getVolume();
 				Q3 = products[Q3Index - 1].getVolume();
 			} else if (option.equals("Price"))
@@ -109,8 +130,9 @@ public class DataCruncher
 			medianIndex = (int) Math.ceil(products.length / 2.0);
 
 			if (medianIndex % 2 == 0)
-//        	q1 and q3 are between even numbers
+//        	if q1 and q3 are between even numbers
 			{
+//				same explanation as the above portions
 				Q1Index = (int) Math.floor(medianIndex / 2.0);
 
 				Q3Index = medianIndex + Q1Index;
@@ -125,7 +147,7 @@ public class DataCruncher
 					Q3 = (products[Q3Index - 1].getPrice() + products[Q3Index].getPrice()) / 2;
 				}
 			} else
-//			q1 and a3 are between odd numbers
+//			if q1 and a3 are between odd numbers
 			{
 				Q1Index = (int) Math.ceil(products.length / 4.0);
 				Q3Index = medianIndex + Q1Index;
@@ -145,6 +167,7 @@ public class DataCruncher
 		final double fQ1 = Q1;
 		final double fQ3 = Q3;
 
+//		lambda stream call to filter, if the items are between the IQR.
 		if (option.equals("Volume"))
 			products = Arrays.stream(products).filter(elem -> elem.getVolume() >= (fQ1 - IQR) && elem.getVolume() <= (fQ3 + IQR)).toArray(Product[]::new);
 		else if (option.equals("Price"))

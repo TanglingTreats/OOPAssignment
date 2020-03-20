@@ -134,6 +134,7 @@ public abstract class Product
 
 
 
+//	Converts a string to titlecase
 	private static String toTitle(String text) {
 		if (text == null || text.isEmpty()) {
 			return text;
@@ -141,6 +142,7 @@ public abstract class Product
 
 		StringBuilder converted = new StringBuilder();
 
+//		for each character, if it's a space, make next character big, else make it small.
 		boolean convertNext = true;
 		for (char ch : text.toCharArray()) {
 			if (Character.isSpaceChar(ch)) {

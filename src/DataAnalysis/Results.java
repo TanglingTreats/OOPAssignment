@@ -33,6 +33,7 @@ public class Results
 
 	public void newTop(Product x)
 	{
+//		part of linear sort, pushes down the items.
 		third = second;
 		second = first;
 		first = x;
