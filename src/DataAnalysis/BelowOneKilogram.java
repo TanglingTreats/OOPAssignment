@@ -1,6 +1,6 @@
 package DataAnalysis;
 
-public class belowOneKilogram extends Product
+public class BelowOneKilogram extends Product
 {
 	//  Price per litre
 	private double pricePerUnit;

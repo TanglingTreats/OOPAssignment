@@ -2,8 +2,6 @@ package DataAnalysis;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class Database
@@ -46,12 +44,12 @@ public class Database
 			switch (productWeight)
 			{
 				case 0:
-					belowOneKilogram belowOneKilogram = (belowOneKilogram) product;
+					BelowOneKilogram belowOneKilogram = (BelowOneKilogram) product;
 					belowOneKilogram.setPricePerUnit();
 					cumulativePrice += belowOneKilogram.getPricePerUnit();
 					break;
 				case 1:
-					aboveOneKilogram aboveOneKilogram = (aboveOneKilogram) product;
+					AboveOneKilogram aboveOneKilogram = (AboveOneKilogram) product;
 					aboveOneKilogram.setPricePerUnit();
 					cumulativePrice += aboveOneKilogram.getPricePerUnit();
 					break;
