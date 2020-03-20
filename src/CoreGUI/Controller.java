@@ -207,7 +207,7 @@ public class Controller {
                             database = new Database();
                             contentGrid.getChildren().clear();
                         }
-
+                        System.out.println("Legnth " + products.length);
                         products = database.update(products, results);
                         numberOfProducts = products.length;
 
@@ -331,8 +331,9 @@ public class Controller {
 
             }
 
-            final String url = testProducts.get(counter).getSupermarket().equals("Fairprice") ?
-                    String.format("https://%s", testProducts.get(counter).getLink()) : testProducts.get(counter).getLink();
+            //final String url = testProducts.get(counter).getSupermarket().equals("Fairprice") ?
+              //      String.format("https://%s", testProducts.get(counter).getLink()) : testProducts.get(counter).getLink();
+            String url = testProducts.get(counter).getLink();
 
 
             System.out.println("URL: " + url);
